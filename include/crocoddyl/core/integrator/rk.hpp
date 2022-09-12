@@ -192,25 +192,25 @@ struct IntegratedActionDataRKTpl : public IntegratedActionDataAbstractTpl<_Scala
         integral(model->get_ni(), Scalar(0.)),
         dx(model->get_state()->get_ndx()),
         ki(model->get_ni(), VectorXs::Zero(model->get_state()->get_ndx())),
-        y(model->get_ni(), VectorXs::Zero(model->get_state()->get_nx())),
-        ws(model->get_ni(), VectorXs::Zero(model->get_control()->get_nw())),
+        y(model->get_ni(), VectorXs::Zero(model->get_state()->get_nx() + 4)),
+        ws(model->get_ni(), VectorXs::Zero(model->get_control()->get_nw() + 2)),
         dx_rk(model->get_ni(), VectorXs::Zero(model->get_state()->get_ndx())),
         dki_dx(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_state()->get_ndx())),
-        dki_du(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu())),
+        dki_du(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu() + 2)),
         dyi_dx(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_state()->get_ndx())),
-        dyi_du(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu())),
+        dyi_du(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu() + 2)),
         dli_dx(model->get_ni(), VectorXs::Zero(model->get_state()->get_ndx())),
-        dli_du(model->get_ni(), VectorXs::Zero(model->get_nu())),
+        dli_du(model->get_ni(), VectorXs::Zero(model->get_nu() + 2)),
         ddli_ddx(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_state()->get_ndx())),
-        ddli_ddw(model->get_ni(), MatrixXs::Zero(model->get_control()->get_nw(), model->get_control()->get_nw())),
-        ddli_ddu(model->get_ni(), MatrixXs::Zero(model->get_nu(), model->get_nu())),
-        ddli_dxdw(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_control()->get_nw())),
-        ddli_dxdu(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu())),
-        ddli_dwdu(model->get_ni(), MatrixXs::Zero(model->get_control()->get_nw(), model->get_nu())),
-        Luu_partialx(model->get_ni(), MatrixXs::Zero(model->get_nu(), model->get_nu())),
-        Lxu_i(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu())),
+        ddli_ddw(model->get_ni(), MatrixXs::Zero(model->get_control()->get_nw(), model->get_control()->get_nw() + 2)),
+        ddli_ddu(model->get_ni(), MatrixXs::Zero(model->get_nu() + 2, model->get_nu() + 2)),
+        ddli_dxdw(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_control()->get_nw() + 2)),
+        ddli_dxdu(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu() + 2)),
+        ddli_dwdu(model->get_ni(), MatrixXs::Zero(model->get_control()->get_nw() + 2, model->get_nu() + 2)),
+        Luu_partialx(model->get_ni(), MatrixXs::Zero(model->get_nu() + 2, model->get_nu() + 2)),
+        Lxu_i(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu() + 2)),
         Lxx_partialx(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_state()->get_ndx())),
-        Lxx_partialu(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu())) {
+        Lxx_partialu(model->get_ni(), MatrixXs::Zero(model->get_state()->get_ndx(), model->get_nu() + 2)) {
     dx.setZero();
 
     for (std::size_t i = 0; i < model->get_ni(); ++i) {
@@ -221,7 +221,7 @@ struct IntegratedActionDataRKTpl : public IntegratedActionDataAbstractTpl<_Scala
 
     const std::size_t nv = model->get_state()->get_nv();
     dyi_dx[0].diagonal().setOnes();
-    dki_dx[0].topRightCorner(nv, nv).diagonal().setOnes();
+    (dki_dx[0].topRightCorner(nv+4, nv+4)).topLeftCorner(nv, nv).diagonal().setOnes();
   }
   virtual ~IntegratedActionDataRKTpl() {}
 

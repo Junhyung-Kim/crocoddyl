@@ -38,6 +38,7 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
   }
   was_feasible_ = false;
 
+  std::cout << "Z1" << std::endl;
   bool recalcDiff = true;
   for (iter_ = 0; iter_ < maxiter; ++iter_) {
     while (true) {
@@ -69,6 +70,7 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
       expectedImprovement();
       dVexp_ = steplength_ * (d_[0] + 0.5 * steplength_ * d_[1]);
 
+  std::cout << "Z2" << std::endl;
       if (dVexp_ >= 0) {  // descend direction
         if (d_[0] < th_grad_ || dV_ > th_acceptstep_ * dVexp_) {
           was_feasible_ = is_feasible_;
@@ -88,18 +90,21 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
       }
     }
 
-    if (steplength_ > th_stepdec_) {
+  std::cout << "Z3  " << steplength_ <<" " << th_stepinc_<< " " <<th_stop_ <<" " << was_feasible_<<std::endl;
+    if (steplength_ > steplength_) {
       decreaseRegularization();
     }
     if (steplength_ <= th_stepinc_) {
       increaseRegularization();
       if (xreg_ == reg_max_) {
+        std::cout << "finished false" << std::endl;
         STOP_PROFILER("SolverFDDP::solve");
         return false;
       }
     }
     stoppingCriteria();
 
+  std::cout << "Z4" << std::endl;
     const std::size_t n_callbacks = callbacks_.size();
     for (std::size_t c = 0; c < n_callbacks; ++c) {
       CallbackAbstract& callback = *callbacks_[c];
@@ -111,6 +116,8 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
       return true;
     }
   }
+
+  std::cout << "Z5" << std::endl;
   STOP_PROFILER("SolverFDDP::solve");
   return false;
 }

@@ -203,7 +203,6 @@ class ActionModelAbstractTpl {
    * @brief Modify the control upper bounds
    */
   void set_u_ub(const VectorXs& u_ub);
-
   /**
    * @brief Print information on the action model
    */
@@ -225,6 +224,7 @@ class ActionModelAbstractTpl {
   VectorXs u_lb_;                           //!< Lower control limits
   VectorXs u_ub_;                           //!< Upper control limits
   bool has_control_limits_;                 //!< Indicates whether any of the control limits is finite
+ // Eigen::Vector4d zmp_task;
 
   /**
    * @brief Update the status of the control limits (i.e. if there are defined limits)
@@ -244,15 +244,15 @@ struct ActionDataAbstractTpl {
   template <template <typename Scalar> class Model>
   explicit ActionDataAbstractTpl(Model<Scalar>* const model)
       : cost(Scalar(0.)),
-        xnext(model->get_state()->get_nx()),
+        xnext(model->get_state()->get_nx()+4),
         Fx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Fu(model->get_state()->get_ndx(), model->get_nu()),
-        r(model->get_nr()),
+        Fu(model->get_state()->get_ndx(), model->get_nu()+2),
+        r(model->get_nr()+4),
         Lx(model->get_state()->get_ndx()),
-        Lu(model->get_nu()),
+        Lu(model->get_nu()+2),
         Lxx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu(model->get_state()->get_ndx(), model->get_nu()),
-        Luu(model->get_nu(), model->get_nu()) {
+        Lxu(model->get_state()->get_ndx(), model->get_nu()+2),
+        Luu(model->get_nu()+2, model->get_nu()+2){
     xnext.setZero();
     Fx.setZero();
     Fu.setZero();
@@ -265,6 +265,7 @@ struct ActionDataAbstractTpl {
   }
   virtual ~ActionDataAbstractTpl() {}
 
+
   Scalar cost;     //!< cost value
   VectorXs xnext;  //!< evolution state
   MatrixXs Fx;     //!< Jacobian of the dynamics
@@ -274,7 +275,7 @@ struct ActionDataAbstractTpl {
   VectorXs Lu;     //!< Jacobian of the cost function
   MatrixXs Lxx;    //!< Hessian of the cost function
   MatrixXs Lxu;    //!< Hessian of the cost function
-  MatrixXs Luu;    //!< Hessian of the cost function
+  MatrixXs Luu;    //!< Hessian of the cost function  
 };
 
 }  // namespace crocoddyl

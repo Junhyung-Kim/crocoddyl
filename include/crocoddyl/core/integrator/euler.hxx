@@ -32,11 +32,11 @@ template <typename Scalar>
 void IntegratedActionModelEulerTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                                  const Eigen::Ref<const VectorXs>& x,
                                                  const Eigen::Ref<const VectorXs>& u) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
-  if (static_cast<std::size_t>(u.size()) != nu_) {
+  if (static_cast<std::size_t>(u.size()) != nu_ + 2) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -59,13 +59,15 @@ void IntegratedActionModelEulerTpl<Scalar>::calc(const boost::shared_ptr<ActionD
 template <typename Scalar>
 void IntegratedActionModelEulerTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                                  const Eigen::Ref<const VectorXs>& x) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  std::cout << "euler " << x.size() << " " << state_->get_nx()<<std::endl;
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
   Data* d = static_cast<Data*>(data.get());
-
+  std::cout << "euler1" <<std::endl;
   differential_->calc(d->differential, x);
+    std::cout << "euler2" <<std::endl;
   d->dx.setZero();
   d->cost = d->differential->cost;
   if (with_cost_residual_) {
@@ -77,32 +79,39 @@ template <typename Scalar>
 void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                                      const Eigen::Ref<const VectorXs>& x,
                                                      const Eigen::Ref<const VectorXs>& u) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
-  if (static_cast<std::size_t>(u.size()) != nu_) {
+  if (static_cast<std::size_t>(u.size()) != nu_ + 2) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
 
   const std::size_t nv = state_->get_nv();
   Data* d = static_cast<Data*>(data.get());
-
+std::cout << "diff 1 " << std::endl;
   control_->calc(d->control, 0., u);
+std::cout << "diff 2 " << std::endl;
   differential_->calcDiff(d->differential, x, d->control->w);
+std::cout << "diff 3 " << std::endl;
+
   const MatrixXs& da_dx = d->differential->Fx;
   const MatrixXs& da_du = d->differential->Fu;
   control_->multiplyByJacobian(d->control, da_du, d->da_du);
-  d->Fx.topRows(nv).noalias() = da_dx * time_step2_;
-  d->Fx.bottomRows(nv).noalias() = da_dx * time_step_;
-  d->Fx.topRightCorner(nv, nv).diagonal().array() += Scalar(time_step_);
-  d->Fu.topRows(nv).noalias() = time_step2_ * d->da_du;
-  d->Fu.bottomRows(nv).noalias() = time_step_ * d->da_du;
+  d->Fx.topRows(nv + 4).noalias() = da_dx * time_step2_;
+  std::cout << "diff 4 " << std::endl;
+  d->Fx.bottomRows(nv + 4).noalias() = da_dx * time_step_;
+  std::cout << "diff 5 " << std::endl;
+  d->Fx.topRightCorner(nv + 4, nv + 4).diagonal().array() += Scalar(time_step_);
+  std::cout << "diff 6 " << std::endl;
+  d->Fu.topRows(nv + 4).noalias() = time_step2_ * d->da_du;
+  std::cout << "diff 7 " << std::endl;
+  d->Fu.bottomRows(nv + 4).noalias() = time_step_ * d->da_du;
   state_->JintegrateTransport(x, d->dx, d->Fx, second);
   state_->Jintegrate(x, d->dx, d->Fx, d->Fx, first, addto);
   state_->JintegrateTransport(x, d->dx, d->Fu, second);
-
+std::cout << "diff 2 " << std::endl;
   d->Lx.noalias() = time_step_ * d->differential->Lx;
   control_->multiplyJacobianTransposeBy(d->control, d->differential->Lu, d->Lu);
   d->Lu *= time_step_;
@@ -117,7 +126,7 @@ void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<Act
 template <typename Scalar>
 void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                                      const Eigen::Ref<const VectorXs>& x) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }

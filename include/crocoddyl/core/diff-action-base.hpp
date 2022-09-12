@@ -240,15 +240,17 @@ struct DifferentialActionDataAbstractTpl {
   explicit DifferentialActionDataAbstractTpl(Model<Scalar>* const model)
       : cost(0.),
         xout(model->get_state()->get_nv()),
-        Fx(model->get_state()->get_nv(), model->get_state()->get_ndx()),
-        Fu(model->get_state()->get_nv(), model->get_nu()),
-        r(model->get_nr()),
+        xout2(4),
+        Fx(model->get_state()->get_nv()+4, model->get_state()->get_ndx()),
+        Fu(model->get_state()->get_nv()+4, model->get_nu()+2),
+        r(model->get_nr()+4),
         Lx(model->get_state()->get_ndx()),
-        Lu(model->get_nu()),
+        Lu(model->get_nu()+2),
         Lxx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu(model->get_state()->get_ndx(), model->get_nu()),
-        Luu(model->get_nu(), model->get_nu()) {
+        Lxu(model->get_state()->get_ndx(), model->get_nu()+2),
+        Luu(model->get_nu()+2, model->get_nu()+2) {
     xout.setZero();
+    xout2.setZero();
     r.setZero();
     Fx.setZero();
     Fu.setZero();
@@ -262,6 +264,7 @@ struct DifferentialActionDataAbstractTpl {
 
   Scalar cost;    //!< cost value
   VectorXs xout;  //!< evolution state
+  VectorXs xout2;  //!< evolution state
   MatrixXs Fx;    //!< Jacobian of the dynamics
   MatrixXs Fu;    //!< Jacobian of the dynamics
   VectorXs r;     //!< Cost residual

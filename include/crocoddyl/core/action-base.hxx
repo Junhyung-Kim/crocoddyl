@@ -31,12 +31,15 @@ ActionModelAbstractTpl<Scalar>::~ActionModelAbstractTpl() {}
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                           const Eigen::Ref<const VectorXs>& x) {
+ // data->zmp_task_ = zmp_task;
+  std::cout << "action??" << std::endl;
   calc(data, x, unone_);
 }
 
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                               const Eigen::Ref<const VectorXs>& x) {
+ // data->zmp_task_ = zmp_task;
   calcDiff(data, x, unone_);
 }
 
@@ -131,7 +134,7 @@ bool ActionModelAbstractTpl<Scalar>::get_has_control_limits() const {
 
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) {
-  if (static_cast<std::size_t>(u_lb.size()) != nu_) {
+  if (static_cast<std::size_t>(u_lb.size()) != nu_ + 2) {
     throw_pretty("Invalid argument: "
                  << "lower bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -141,7 +144,7 @@ void ActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) {
 
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::set_u_ub(const VectorXs& u_ub) {
-  if (static_cast<std::size_t>(u_ub.size()) != nu_) {
+  if (static_cast<std::size_t>(u_ub.size()) != nu_ + 2) {
     throw_pretty("Invalid argument: "
                  << "upper bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }

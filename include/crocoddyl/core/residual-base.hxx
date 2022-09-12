@@ -13,7 +13,8 @@ namespace crocoddyl {
 template <typename Scalar>
 ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<StateAbstract> state,
                                                            const std::size_t nr, const std::size_t nu,
-                                                           const bool q_dependent, const bool v_dependent,
+                                                           const bool q_dependent, const bool v_dependent, 
+                                                           const bool x_dependent, 
                                                            const bool u_dependent)
     : state_(state),
       nr_(nr),
@@ -21,18 +22,20 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
       unone_(VectorXs::Zero(nu)),
       q_dependent_(q_dependent),
       v_dependent_(v_dependent),
+      x_dependent_(x_dependent),
       u_dependent_(u_dependent) {}
 
 template <typename Scalar>
 ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<StateAbstract> state,
                                                            const std::size_t nr, const bool q_dependent,
-                                                           const bool v_dependent, const bool u_dependent)
+                                                           const bool v_dependent, const bool x_dependent, const bool u_dependent)
     : state_(state),
       nr_(nr),
       nu_(state->get_nv()),
       unone_(VectorXs::Zero(state->get_nv())),
       q_dependent_(q_dependent),
       v_dependent_(v_dependent),
+      x_dependent_(x_dependent),
       u_dependent_(u_dependent) {}
 
 template <typename Scalar>
@@ -98,6 +101,11 @@ bool ResidualModelAbstractTpl<Scalar>::get_v_dependent() const {
 template <typename Scalar>
 bool ResidualModelAbstractTpl<Scalar>::get_u_dependent() const {
   return u_dependent_;
+}
+
+template <typename Scalar>
+bool ResidualModelAbstractTpl<Scalar>::get_x_dependent() const {
+  return x_dependent_;
 }
 
 template <typename Scalar>

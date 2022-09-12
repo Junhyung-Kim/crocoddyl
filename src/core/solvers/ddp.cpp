@@ -75,6 +75,7 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
     }
     expectedImprovement();
 
+  std::cout << "Z5" << std::endl;
     // We need to recalculate the derivatives when the step length passes
     recalcDiff = false;
     for (std::vector<double>::const_iterator it = alphas_.begin(); it != alphas_.end(); ++it) {
@@ -98,6 +99,7 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
       }
     }
 
+  std::cout << "Z4" << std::endl;
     if (steplength_ > th_stepdec_) {
       decreaseRegularization();
     }
@@ -110,14 +112,17 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
     }
     stoppingCriteria();
 
+  std::cout << "Z3" << std::endl;
     const std::size_t n_callbacks = callbacks_.size();
     for (std::size_t c = 0; c < n_callbacks; ++c) {
       CallbackAbstract& callback = *callbacks_[c];
       callback(*this);
     }
-
+  std::cout << "Z2" << std::endl;
     if (was_feasible_ && stop_ < th_stop_) {
       STOP_PROFILER("SolverDDP::solve");
+
+  std::cout << "Z1" << std::endl;
       return true;
     }
   }
