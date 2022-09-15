@@ -36,8 +36,6 @@ template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                               const Eigen::Ref<const VectorXs>& x,
                                               const Eigen::Ref<const VectorXs>& u) {
-  
-std::cout << "111111" << std::endl;
   if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -56,14 +54,12 @@ std::cout << "111111" << std::endl;
   d->ws[0] = u0_data->w;
   //pinocchio Diff and actuationmodel
   differential_->calc(k0_data, x, d->ws[0]);
-  std::cout << "x1" << std::endl;
   d->y[0] = x;
   d->ki[0].head(nv) = d->y[0].segment(state_->get_nq(),state_->get_nv());
   d->ki[0].segment(nv,nv) = k0_data->xout;
   d->ki[0].tail(4) = k0_data->xout2;
 
   d->integral[0] = k0_data->cost;
-  std::cout << "x2" << std::endl;
   for (std::size_t i = 1; i < ni_; ++i) {
     const boost::shared_ptr<DifferentialActionDataAbstract>& ki_data = d->differential[i];
     const boost::shared_ptr<ControlParametrizationDataAbstract>& ui_data = d->control[i];
@@ -78,7 +74,7 @@ std::cout << "111111" << std::endl;
     d->ki[i].tail(4) = ki_data->xout2;
     d->integral[i] = ki_data->cost;
   }
-    std::cout << "16" << std::endl;
+
   if (ni_ == 2) {
     d->dx = d->ki[1] * time_step_;
     d->cost = d->integral[1] * time_step_;
@@ -95,7 +91,6 @@ std::cout << "111111" << std::endl;
   if (with_cost_residual_) {
     d->r = k0_data->r;
   }
-  std::cout << "rk end " <<std::endl;
 }
 
 template <typename Scalar>
@@ -120,7 +115,6 @@ template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                                   const Eigen::Ref<const VectorXs>& x,
                                                   const Eigen::Ref<const VectorXs>& u) {
-  std::cout <<"include " << u.size()<<std::endl;
   if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 4) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -132,7 +126,6 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   const std::size_t nv = state_->get_nv();
   const std::size_t nu = control_->get_nu();
   Data* d = static_cast<Data*>(data.get());
-  std::cout <<"cd0 " << nv << " " << d->dki_dx[0].size()<<std::endl;
   assert_pretty(MatrixXs(d->dyi_dx[0]).isApprox(MatrixXs::Identity(state_->get_ndx(), state_->get_ndx())),
                 "you have changed dyi_dx[0] values that supposed to be constant.");
   //assert_pretty((MatrixXs(d->dki_dx[0]).topRightCorner(nv+4, nv+4)).topLeftCorner(nv, nv).isApprox(MatrixXs::Identity(nv, nv)),
@@ -140,17 +133,14 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   for (std::size_t i = 0; i < ni_; ++i) {
     differential_->calcDiff(d->differential[i], d->y[i], d->ws[i]);
   }
-std::cout <<"cd2"<<std::endl;
   const boost::shared_ptr<DifferentialActionDataAbstract>& k0_data = d->differential[0];
   const boost::shared_ptr<ControlParametrizationDataAbstract>& u0_data = d->control[0];
   d->dki_dx[0].bottomRows(nv+4) = k0_data->Fx;
   control_->multiplyByJacobian(u0_data, k0_data->Fu,
                                d->dki_du[0].bottomRows(nv+4));  // dki_du = dki_dw * dw_du
-std::cout <<"cd3"<<std::endl;
   d->dli_dx[0] = k0_data->Lx;
   control_->multiplyJacobianTransposeBy(u0_data, k0_data->Lu,
                                         d->dli_du[0]);  // dli_du = dli_dw * dw_du
-std::cout <<"cd4"<<std::endl;
   d->ddli_ddx[0] = k0_data->Lxx;
   d->ddli_ddw[0] = k0_data->Luu;
   control_->multiplyByJacobian(u0_data, d->ddli_ddw[0], d->ddli_dwdu[0]);  // ddli_dwdu = ddli_ddw * dw_du
@@ -158,7 +148,6 @@ std::cout <<"cd4"<<std::endl;
                                         d->ddli_ddu[0]);  // ddli_ddu = dw_du.T * ddli_dwdu
   d->ddli_dxdw[0] = k0_data->Lxu;
   control_->multiplyByJacobian(u0_data, d->ddli_dxdw[0], d->ddli_dxdu[0]);  // ddli_dxdu = ddli_dxdw * dw_du
-std::cout <<"cd5"<<std::endl;
   for (std::size_t i = 1; i < ni_; ++i) {
     const boost::shared_ptr<DifferentialActionDataAbstract>& ki_data = d->differential[i];
     const boost::shared_ptr<ControlParametrizationDataAbstract>& ui_data = d->control[i];
@@ -168,7 +157,6 @@ std::cout <<"cd5"<<std::endl;
     state_->JintegrateTransport(x, d->dx_rk[i], d->dyi_dx[i], second);
     state_->Jintegrate(x, d->dx_rk[i], d->dyi_dx[i].topLeftCorner(state_->get_ndx(),state_->get_ndx()), d->dyi_dx[i], first, addto);
     state_->JintegrateTransport(x, d->dx_rk[i], d->dyi_du[i], second);  // dyi_du = Jintegrate * dyi_du
-std::cout <<"cd8"<<std::endl;
     // Sparse matrix-matrix multiplication for computing:
     Eigen::Block<MatrixXs> dkvi_dq = d->dki_dx[i].bottomLeftCorner(nv+4, nv+4);
     Eigen::Block<MatrixXs> dkvi_dv = d->dki_dx[i].bottomRightCorner(nv+4, nv+4);
@@ -184,42 +172,33 @@ std::cout <<"cd8"<<std::endl;
     const Eigen::Block<MatrixXs> dvi_du = d->dyi_du[i].bottomLeftCorner(nv+4, nu+2);
     //   i. d->dki_dx[i].noalias() = d->dki_dy[i] * d->dyi_dx[i], where dki_dy is ki_data.Fx
     d->dki_dx[i].topRows(nv+4) = d->dyi_dx[i].bottomRows(nv+4);
-    std::cout <<"cd9"<<std::endl;
     dkvi_dq.noalias() = dki_dqi * dqi_dq;
-    std::cout <<"cd10"<<std::endl;
     if (i == 1) {
       dkvi_dv = time_step_ / Scalar(2.) * dki_dqi;
     } else {
       dkvi_dv.noalias() = dki_dqi * dqi_dv;
     }
-    std::cout <<"cd16"<<std::endl;
     dkvi_dq.noalias() += dki_dvi * dvi_dq;
     dkvi_dv.noalias() += dki_dvi * dvi_dv;
     //  ii. d->dki_du[i].noalias() = d->dki_dy[i] * d->dyi_du[i], where dki_dy is ki_data.Fx
     dkqi_du = dvi_du;
-    std::cout <<"cd15"<<std::endl;
     dkvi_du.noalias() = dki_dqi * dqi_du;
     dkvi_du.noalias() += dki_dvi * dvi_du;
-std::cout <<"cd11"<<std::endl;
     control_->multiplyByJacobian(ui_data, ki_data->Fu, d->dki_du[i].bottomRows(nv+4),
                                  addto);  // dfi_du = dki_dw * dw_du
 
     d->dli_dx[i].noalias() = ki_data->Lx.transpose() * d->dyi_dx[i];
-    std::cout <<"cd12"<<std::endl;
     control_->multiplyJacobianTransposeBy(ui_data, ki_data->Lu,
                                           d->dli_du[i]);  // dli_du = Lu * dw_du
     d->dli_du[i].noalias() += ki_data->Lx.transpose() * d->dyi_du[i];
 
     d->Lxx_partialx[i].noalias() = ki_data->Lxx * d->dyi_dx[i];
     d->ddli_ddx[i].noalias() = d->dyi_dx[i].transpose() * d->Lxx_partialx[i];
-std::cout <<"cd13"<<std::endl;
     control_->multiplyByJacobian(ui_data, ki_data->Lxu, d->Lxu_i[i]);  // Lxu = Lxw * dw_du
     d->Luu_partialx[i].noalias() = d->Lxu_i[i].transpose() * d->dyi_du[i];
     d->Lxx_partialu[i].noalias() = ki_data->Lxx * d->dyi_du[i];
-    std::cout <<"cd14"<<std::endl;
     control_->multiplyByJacobian(ui_data, ki_data->Luu,
                                  d->ddli_dwdu[i]);  // ddli_dwdu = ddli_ddw * dw_du
-                                 std::cout <<"cd15"<<std::endl;
     control_->multiplyJacobianTransposeBy(ui_data, d->ddli_dwdu[i],
                                           d->ddli_ddu[i]);  // ddli_ddu = dw_du.T * ddli_dwdu
     d->ddli_ddu[i].noalias() +=
@@ -230,7 +209,6 @@ std::cout <<"cd13"<<std::endl;
                                  d->ddli_dxdu[i]);  // ddli_dxdu = ddli_dxdw * dw_du
     d->ddli_dxdu[i].noalias() += d->dyi_dx[i].transpose() * d->Lxx_partialu[i];
   }
-std::cout <<"cd6"<<std::endl;
   if (ni_ == 2) {
     d->Fx.noalias() = time_step_ * d->dki_dx[1];
     d->Fu.noalias() = time_step_ * d->dki_du[1];
@@ -264,11 +242,9 @@ std::cout <<"cd6"<<std::endl;
         time_step_ / Scalar(6.) *
         (d->ddli_dxdu[0] + Scalar(2.) * d->ddli_dxdu[1] + Scalar(2.) * d->ddli_dxdu[2] + d->ddli_dxdu[3]);
   }
-std::cout <<"cd7"<<std::endl;
   state_->JintegrateTransport(x, d->dx, d->Fx, second);
   state_->Jintegrate(x, d->dx, d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), first, addto);
   state_->JintegrateTransport(x, d->dx, d->Fu, second);
-  std::cout <<"cd8"<<std::endl;
 }
 
 template <typename Scalar>

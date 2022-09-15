@@ -120,7 +120,7 @@ void SolverAbstract::setCandidate(const std::vector<Eigen::VectorXd>& xs_warm,
       if (static_cast<std::size_t>(xs_warm[t].size()) != nx + 4) {
         throw_pretty("Invalid argument: "
                      << "xs_init[" + std::to_string(t) + "] has wrong dimension (" << xs_warm[t].size()
-                     << " provided - it should be equal to " + std::to_string(nx) + "). ActionModel: " << *models[t]);
+                     << " prov ided - it should be equal to " + std::to_string(nx) + "). ActionModel: " << *models[t]);
       }
     }
     const std::size_t nx = problem_->get_terminalModel()->get_state()->get_nx();

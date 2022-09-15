@@ -149,7 +149,6 @@ void CostModelStateTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstrac
                                          const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
   residual_->calcDiff(data->residual, x, u);
   activation_->calcDiff(data->activation, data->residual->r);
-
   if (pin_model_) {
     typedef Eigen::Block<MatrixXs> MatrixBlock;
     for (pinocchio::JointIndex i = 1; i < (pinocchio::JointIndex)pin_model_->njoints; ++i) {

@@ -247,7 +247,7 @@ struct ActionDataAbstractTpl {
         xnext(model->get_state()->get_nx()+4),
         Fx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
         Fu(model->get_state()->get_ndx(), model->get_nu()+2),
-        r(model->get_nr()+4),
+        r(model->get_nr()),
         Lx(model->get_state()->get_ndx()),
         Lu(model->get_nu()+2),
         Lxx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),

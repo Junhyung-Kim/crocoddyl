@@ -44,7 +44,6 @@ template <typename Scalar>
 void CostModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstract>& data,
                                            const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& u) {
   Data* d = static_cast<Data*>(data.get());
-
   const Scalar c0 = d->cost;
   const VectorXs& r0 = d->residual->r;
   if (get_with_gauss_approx()) {
@@ -94,7 +93,7 @@ void CostModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstr
     }
     d->du(iu) = 0.0;
   }
-
+  
   if (get_with_gauss_approx()) {
     const MatrixXs& Arr = d->data_0->activation->Arr;
     d->Lxx = d->residual->Rx.transpose() * Arr * d->residual->Rx;

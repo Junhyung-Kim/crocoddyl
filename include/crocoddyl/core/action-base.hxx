@@ -32,7 +32,6 @@ template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                           const Eigen::Ref<const VectorXs>& x) {
  // data->zmp_task_ = zmp_task;
-  std::cout << "action??" << std::endl;
   calc(data, x, unone_);
 }
 

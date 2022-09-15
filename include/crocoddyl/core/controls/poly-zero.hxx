@@ -19,7 +19,6 @@ template <typename Scalar>
 void ControlParametrizationModelPolyZeroTpl<Scalar>::calc(
     const boost::shared_ptr<ControlParametrizationDataAbstract>& data, const Scalar,
     const Eigen::Ref<const VectorXs>& u) const {
-      std::cout << u.size() << " " << nu_ << std::endl;
   if (static_cast<std::size_t>(u.size()) != nu_ + 2) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
@@ -91,7 +90,6 @@ void ControlParametrizationModelPolyZeroTpl<Scalar>::multiplyByJacobian(
     Eigen::Ref<MatrixXs> out, const AssignmentOp op) const {
   assert_pretty(is_a_AssignmentOp(op), ("op must be one of the AssignmentOp {settop, addto, rmfrom}"));
 
-  std::cout <<"nw" << nw_ << " " << A.cols() << std::endl;
   if (A.rows() != out.rows() || static_cast<std::size_t>(A.cols()) != nw_ + 2||
       static_cast<std::size_t>(out.cols()) != nu_ + 2) {
     throw_pretty("Invalid argument: "

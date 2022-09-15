@@ -266,7 +266,7 @@ void SolverKKT::allocateData() {
     } else {
       xs_try_[t] = Eigen::VectorXd::Constant(nx, NAN);
     }
-    const std::size_t nu = model->get_nu();
+    const std::size_t nu = model->get_nu() + 2;
     us_try_[t] = Eigen::VectorXd::Constant(nu, NAN);
     dxs_[t] = Eigen::VectorXd::Zero(ndx);
     dus_[t] = Eigen::VectorXd::Zero(nu);

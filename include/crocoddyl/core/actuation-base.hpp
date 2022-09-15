@@ -147,14 +147,17 @@ struct ActuationDataAbstractTpl {
   explicit ActuationDataAbstractTpl(Model<Scalar>* const model)
       : tau(model->get_state()->get_nv()),
         dtau_dx(model->get_state()->get_nv(), model->get_state()->get_ndx()),
-        dtau_du(model->get_state()->get_nv(), model->get_nu()) {
+        dtau_du(model->get_state()->get_nv(), model->get_nu()),
+        u_x(2) {
     tau.setZero();
     dtau_dx.setZero();
     dtau_du.setZero();
+    u_x.setZero();
   }
   virtual ~ActuationDataAbstractTpl() {}
 
   VectorXs tau;      //!< Actuation (generalized force) signal
+  VectorXs u_x;
   MatrixXs dtau_dx;  //!< Partial derivatives of the actuation model w.r.t. the state point
   MatrixXs dtau_du;  //!< Partial derivatives of the actuation model w.r.t. the control input
 };

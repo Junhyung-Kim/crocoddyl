@@ -75,7 +75,6 @@ void DifferentialActionModelNumDiffTpl<Scalar>::calcDiff(const boost::shared_ptr
   data->cost = d->data_0->cost;
 
   assertStableStateFD(x);
-
   // Computing the d action(x,u) / dx
   d->dx.setZero();
   for (std::size_t ix = 0; ix < state_->get_ndx(); ++ix) {

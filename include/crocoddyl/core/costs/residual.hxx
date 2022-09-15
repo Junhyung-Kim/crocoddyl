@@ -52,24 +52,32 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
   Data* d = static_cast<Data*>(data.get());
   residual_->calcDiff(data->residual, x, u);
   activation_->calcDiff(data->activation, data->residual->r);
-
   // Compute the derivatives of the cost function based on a Gauss-Newton approximation
   const bool is_rq = residual_->get_q_dependent();
   const bool is_rv = residual_->get_v_dependent();
   const bool is_rx = residual_->get_x_dependent();
   const bool is_ru = residual_->get_u_dependent() && nu_ != 0;
   const std::size_t nv = state_->get_nv();
+
   if (is_ru) {
     data->Lu.noalias() = data->residual->Ru.transpose() * data->activation->Ar;
     d->Arr_Ru.noalias() = data->activation->Arr.diagonal().asDiagonal() * data->residual->Ru;
     data->Luu.noalias() = data->residual->Ru.transpose() * d->Arr_Ru;
   }
-  if (is_rq && is_rv) {
+  if (is_rq && is_rv && is_rx) {
     data->Lx.noalias() = data->residual->Rx.transpose() * data->activation->Ar;
     d->Arr_Rx.noalias() = data->activation->Arr.diagonal().asDiagonal() * data->residual->Rx;
     data->Lxx.noalias() = data->residual->Rx.transpose() * d->Arr_Rx;
     if (is_ru) {
       data->Lxu.noalias() = data->residual->Rx.transpose() * d->Arr_Ru;
+    }
+  } else if (is_rq && is_rv && (is_rx == false)) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(2*nv);
+    data->Lx.head(2*nv).noalias() = Rq.transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(2*nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
+    data->Lxx.topLeftCorner(2*nv, 2*nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(2*nv);
+    if (is_ru) {
+      data->Lxu.topRows(2*nv).noalias() = Rq.transpose() * d->Arr_Ru;
     }
   } else if (is_rq) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
@@ -80,12 +88,20 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
       data->Lxu.topRows(nv).noalias() = Rq.transpose() * d->Arr_Ru;
     }
   } else if (is_rv) {
-    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rv = data->residual->Rx.rightCols(nv);
-    data->Lx.tail(nv).noalias() = Rv.transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rv;
-    data->Lxx.bottomRightCorner(nv, nv).noalias() = Rv.transpose() * d->Arr_Rx.rightCols(nv);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rv = data->residual->Rx.middleCols(nv,nv);
+    data->Lx.segment(nv,nv).noalias() = Rv.transpose() * data->activation->Ar;
+    d->Arr_Rx.middleCols(nv,nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rv;
+    data->Lxx.block(nv,nv,nv,nv).noalias() = Rv.transpose() * d->Arr_Rx.middleCols(nv,nv);
     if (is_ru) {
-      data->Lxu.bottomRows(nv).noalias() = Rv.transpose() * d->Arr_Ru;
+      data->Lxu.middleRows(nv, nv).noalias() = Rv.transpose() * d->Arr_Ru;
+    }
+  } else if (is_rx) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rx = data->residual->Rx.rightCols(4);
+    data->Lx.tail(4).noalias() = Rx.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rx;
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rx.transpose() * d->Arr_Rx.rightCols(4);
+    if (is_ru) {
+      data->Lxu.bottomRows(4).noalias() = Rx.transpose() * d->Arr_Ru;
     }
   }
 }
@@ -101,21 +117,32 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
   // Compute the derivatives of the cost function based on a Gauss-Newton approximation
   const bool is_rq = residual_->get_q_dependent();
   const bool is_rv = residual_->get_v_dependent();
+  const bool is_rx = residual_->get_x_dependent();
   const std::size_t nv = state_->get_nv();
-  if (is_rq && is_rv) {
+  if (is_rq && is_rv && is_rx) {
     data->Lx.noalias() = data->residual->Rx.transpose() * data->activation->Ar;
     d->Arr_Rx.noalias() = data->activation->Arr.diagonal().asDiagonal() * data->residual->Rx;
     data->Lxx.noalias() = data->residual->Rx.transpose() * d->Arr_Rx;
+  } else if (is_rq && is_rv && (is_rx == false)) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(2*nv);
+    data->Lx.head(2*nv).noalias() = Rq.transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(2*nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
+    data->Lxx.topLeftCorner(2*nv, 2*nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(2*nv);
   } else if (is_rq) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
     data->Lx.head(nv).noalias() = Rq.transpose() * data->activation->Ar;
     d->Arr_Rx.leftCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
     data->Lxx.topLeftCorner(nv, nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(nv);
   } else if (is_rv) {
-    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rv = data->residual->Rx.rightCols(nv);
-    data->Lx.tail(nv).noalias() = Rv.transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rv;
-    data->Lxx.bottomRightCorner(nv, nv).noalias() = Rv.transpose() * d->Arr_Rx.rightCols(nv);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rv = data->residual->Rx.middleCols(nv,nv);
+    data->Lx.segment(nv,nv).noalias() = Rv.transpose() * data->activation->Ar;
+    d->Arr_Rx.middleCols(nv,nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rv;
+    data->Lxx.block(nv,nv,nv,nv).noalias() = Rv.transpose() * d->Arr_Rx.middleCols(nv, nv);
+  } else if (is_rx) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rv = data->residual->Rx.rightCols(4);
+    data->Lx.tail(4).noalias() = Rv.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rv;
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rv.transpose() * d->Arr_Rx.rightCols(4);
   }
 }
 

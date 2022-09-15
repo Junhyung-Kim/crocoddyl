@@ -160,21 +160,16 @@ Scalar ShootingProblemTpl<Scalar>::calc(const std::vector<VectorXs>& xs, const s
 #ifdef CROCODDYL_WITH_MULTITHREADING
 #pragma omp parallel for num_threads(nthreads_)
 #endif
+   
   for (std::size_t i = 0; i < T_; ++i) {
     const std::size_t nu = running_models_[i]->get_nu();
     if (nu != 0) {
-      std::cout << "runningmodel22 " << running_models_.size() << std::endl;
       running_models_[i]->calc(running_datas_[i], xs[i], us[i]);
-      std::cout << "runningmodel " << running_models_.size() << std::endl;
     } else {
-      std::cout << "aaaaaa " << running_models_.size() << std::endl;
       running_models_[i]->calc(running_datas_[i], xs[i]);
     }
   }
-
-  std::cout << "aaaaaaa "  << std::endl;
   terminal_model_->calc(terminal_data_, xs.back());
-  std::cout<< "bbbbb" <<std::endl;
   cost_ = Scalar(0.);
 #ifdef CROCODDYL_WITH_MULTITHREADING
 #pragma omp simd reduction(+ : cost_)
@@ -184,7 +179,6 @@ Scalar ShootingProblemTpl<Scalar>::calc(const std::vector<VectorXs>& xs, const s
   }
   cost_ += terminal_data_->cost;
   STOP_PROFILER("ShootingProblem::calc");
-    std::cout<< "ccccc" <<std::endl;
   return cost_;
 }
 

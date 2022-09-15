@@ -14,7 +14,7 @@ namespace crocoddyl {
 template <typename Scalar>
 ResidualModelControlTpl<Scalar>::ResidualModelControlTpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                          const VectorXs& uref)
-    : Base(state, static_cast<std::size_t>(uref.size()), static_cast<std::size_t>(uref.size()), false, false, true),
+    : Base(state, static_cast<std::size_t>(uref.size()), static_cast<std::size_t>(uref.size()), false, false, false, true),
       uref_(uref) {
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
@@ -25,7 +25,7 @@ ResidualModelControlTpl<Scalar>::ResidualModelControlTpl(boost::shared_ptr<typen
 template <typename Scalar>
 ResidualModelControlTpl<Scalar>::ResidualModelControlTpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                          const std::size_t nu)
-    : Base(state, nu, nu, false, false, true), uref_(VectorXs::Zero(nu)) {
+    : Base(state, nu, nu, false, false, false, true), uref_(VectorXs::Zero(nu)) {
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
                  << "it seems to be an autonomous system, if so, don't add this residual function");

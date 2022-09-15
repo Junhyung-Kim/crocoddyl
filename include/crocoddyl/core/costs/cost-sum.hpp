@@ -251,7 +251,7 @@ struct CostDataSumTpl {
   template <template <typename Scalar> class Model>
   CostDataSumTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
       : Lx_internal(model->get_state()->get_ndx()),
-        Lu_internal(model->get_nu()+2),
+        Lu_internal(model->get_nu() + 2),
         Lxx_internal(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
         Lxu_internal(model->get_state()->get_ndx(), model->get_nu()+2),
         Luu_internal(model->get_nu()+2, model->get_nu()+2),

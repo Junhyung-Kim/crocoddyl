@@ -75,7 +75,6 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
     }
     expectedImprovement();
 
-  std::cout << "Z5" << std::endl;
     // We need to recalculate the derivatives when the step length passes
     recalcDiff = false;
     for (std::vector<double>::const_iterator it = alphas_.begin(); it != alphas_.end(); ++it) {
@@ -183,7 +182,7 @@ void SolverDDP::resizeData() {
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& model = models[t];
-    const std::size_t nu = model->get_nu();
+    const std::size_t nu = model->get_nu() + 2;
     Qxu_[t].conservativeResize(ndx, nu);
     Quu_[t].conservativeResize(nu, nu);
     Qu_[t].conservativeResize(nu);
@@ -202,7 +201,6 @@ double SolverDDP::calcDiff() {
     problem_->calc(xs_, us_);
   }
   cost_ = problem_->calcDiff(xs_, us_);
-
   ffeas_ = computeDynamicFeasibility();
   STOP_PROFILER("SolverDDP::calcDiff");
   return cost_;
@@ -221,6 +219,7 @@ void SolverDDP::backwardPass() {
   if (!is_feasible_) {
     Vx_.back().noalias() += Vxx_.back() * fs_.back();
   }
+
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
   for (int t = static_cast<int>(problem_->get_T()) - 1; t >= 0; --t) {
@@ -258,10 +257,11 @@ void SolverDDP::backwardPass() {
       }
     }
 
-    computeGains(t);
+    computeGains(t); //problem
 
     Vx_[t] = Qx_[t];
     Vxx_[t] = Qxx_[t];
+
     if (nu != 0) {
       Quuk_[t].noalias() = Quu_[t] * k_[t];
       Vx_[t].noalias() -= K_[t].transpose() * Qu_[t];
@@ -269,6 +269,7 @@ void SolverDDP::backwardPass() {
       Vxx_[t].noalias() -= Qxu_[t] * K_[t];
       STOP_PROFILER("SolverDDP::Vxx");
     }
+
     Vxx_tmp_ = 0.5 * (Vxx_[t] + Vxx_[t].transpose());
     Vxx_[t] = Vxx_tmp_;
 
@@ -280,6 +281,8 @@ void SolverDDP::backwardPass() {
     if (!is_feasible_) {
       Vx_[t].noalias() += Vxx_[t] * fs_[t];
     }
+
+
 
     if (raiseIfNaN(Vx_[t].lpNorm<Eigen::Infinity>())) {
       throw_pretty("backward_error");
@@ -402,7 +405,7 @@ void SolverDDP::allocateData() {
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& model = models[t];
-    const std::size_t nu = model->get_nu();
+    const std::size_t nu = model->get_nu() + 2;
     Vxx_[t] = Eigen::MatrixXd::Zero(ndx, ndx);
     Vx_[t] = Eigen::VectorXd::Zero(ndx);
     Qxx_[t] = Eigen::MatrixXd::Zero(ndx, ndx);
