@@ -41,6 +41,7 @@ SolverDDP::~SolverDDP() {}
 
 bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::vector<Eigen::VectorXd>& init_us,
                       const std::size_t maxiter, const bool is_feasible, const double reginit) {
+                      std::cout << "Solve "<< std::endl;
   START_PROFILER("SolverDDP::solve");
   if (problem_->is_updated()) {
     resizeData();
@@ -61,16 +62,20 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
   for (iter_ = 0; iter_ < maxiter; ++iter_) {
     while (true) {
       try {
+        std::cout <<"Aaa" << std::endl;
         computeDirection(recalcDiff);
       } catch (std::exception& e) {
+        std::cout <<"bbbb  " << e.what()<<std::endl;
         recalcDiff = false;
         increaseRegularization();
         if (xreg_ == reg_max_) {
+          std::cout << "fff" << std::endl;
           return false;
         } else {
           continue;
         }
       }
+      std::cout << "Ddd" << std::endl;
       break;
     }
     expectedImprovement();

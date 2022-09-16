@@ -221,7 +221,8 @@ struct IntegratedActionDataRKTpl : public IntegratedActionDataAbstractTpl<_Scala
 
     const std::size_t nv = model->get_state()->get_nv();
     dyi_dx[0].diagonal().setOnes();
-    (dki_dx[0].topRightCorner(nv+4, nv+4)).topLeftCorner(nv, nv).diagonal().setOnes();
+    dki_dx[0].block(nv,nv, nv, nv).diagonal().setOnes();
+    dki_dx[0].bottomLeftCorner(4,4).setOnes();
   }
   virtual ~IntegratedActionDataRKTpl() {}
 

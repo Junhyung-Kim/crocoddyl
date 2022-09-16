@@ -69,7 +69,7 @@ void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionData
   
     d->ws[i] = ui_data->w;
     differential_->calc(ki_data, d->y[i], d->ws[i]);
-    d->ki[i].head(nv) = d->y[0].segment(state_->get_nq(),state_->get_nv());
+    d->ki[i].head(nv) = d->y[i].segment(state_->get_nq(),state_->get_nv());
     d->ki[i].segment(nv,nv) = ki_data->xout;
     d->ki[i].tail(4) = ki_data->xout2;
     d->integral[i] = ki_data->cost;
@@ -126,8 +126,8 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   const std::size_t nv = state_->get_nv();
   const std::size_t nu = control_->get_nu();
   Data* d = static_cast<Data*>(data.get());
-  assert_pretty(MatrixXs(d->dyi_dx[0]).isApprox(MatrixXs::Identity(state_->get_ndx(), state_->get_ndx())),
-                "you have changed dyi_dx[0] values that supposed to be constant.");
+  //assert_pretty(MatrixXs(d->dyi_dx[0]).isApprox(MatrixXs::Identity(state_->get_ndx(), state_->get_ndx())),
+              //  "you have changed dyi_dx[0] values that supposed to be constant.");
   //assert_pretty((MatrixXs(d->dki_dx[0]).topRightCorner(nv+4, nv+4)).topLeftCorner(nv, nv).isApprox(MatrixXs::Identity(nv, nv)),
   //              "you have changed dki_dx[0] values that supposed to be constant.");//revise
   for (std::size_t i = 0; i < ni_; ++i) {
@@ -148,6 +148,7 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
                                         d->ddli_ddu[0]);  // ddli_ddu = dw_du.T * ddli_dwdu
   d->ddli_dxdw[0] = k0_data->Lxu;
   control_->multiplyByJacobian(u0_data, d->ddli_dxdw[0], d->ddli_dxdu[0]);  // ddli_dxdu = ddli_dxdw * dw_du
+
   for (std::size_t i = 1; i < ni_; ++i) {
     const boost::shared_ptr<DifferentialActionDataAbstract>& ki_data = d->differential[i];
     const boost::shared_ptr<ControlParametrizationDataAbstract>& ui_data = d->control[i];
@@ -171,7 +172,7 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
     const Eigen::Block<MatrixXs> dqi_du = d->dyi_du[i].topLeftCorner(nv+4, nu+2);
     const Eigen::Block<MatrixXs> dvi_du = d->dyi_du[i].bottomLeftCorner(nv+4, nu+2);
     //   i. d->dki_dx[i].noalias() = d->dki_dy[i] * d->dyi_dx[i], where dki_dy is ki_data.Fx
-    d->dki_dx[i].topRows(nv+4) = d->dyi_dx[i].bottomRows(nv+4);
+    d->dki_dx[i].topRows(nv) = d->dyi_dx[i].block(nv, 0, nv, state_->get_ndx());
     dkvi_dq.noalias() = dki_dqi * dqi_dq;
     if (i == 1) {
       dkvi_dv = time_step_ / Scalar(2.) * dki_dqi;
@@ -242,9 +243,11 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
         time_step_ / Scalar(6.) *
         (d->ddli_dxdu[0] + Scalar(2.) * d->ddli_dxdu[1] + Scalar(2.) * d->ddli_dxdu[2] + d->ddli_dxdu[3]);
   }
+  
   state_->JintegrateTransport(x, d->dx, d->Fx, second);
   state_->Jintegrate(x, d->dx, d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), first, addto);
   state_->JintegrateTransport(x, d->dx, d->Fu, second);
+
 }
 
 template <typename Scalar>

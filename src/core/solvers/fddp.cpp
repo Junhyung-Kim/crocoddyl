@@ -42,9 +42,11 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
   for (iter_ = 0; iter_ < maxiter; ++iter_) {
     while (true) {
       try {
+                std::cout <<"Aaa" << std::endl;
         computeDirection(recalcDiff);
       } catch (std::exception& e) {
         recalcDiff = false;
+        std::cout <<"bbbb  " << e.what()<<std::endl;
         increaseRegularization();
         if (xreg_ == reg_max_) {
           return false;
@@ -52,6 +54,8 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
           continue;
         }
       }
+
+      std::cout << "Ddd" << std::endl;
       break;
     }
     updateExpectedImprovement();
@@ -86,6 +90,8 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
         }
       }
     }
+
+  std::cout << "Z4" << std::endl;
     if (steplength_ > steplength_) {
       decreaseRegularization();
     }
@@ -97,17 +103,22 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
       }
     }
     stoppingCriteria();
+
+  std::cout << "Z3" << std::endl;
     const std::size_t n_callbacks = callbacks_.size();
     for (std::size_t c = 0; c < n_callbacks; ++c) {
       CallbackAbstract& callback = *callbacks_[c];
       callback(*this);
     }
 
+  std::cout << "Z2" << std::endl;
     if (was_feasible_ && stop_ < th_stop_) {
       STOP_PROFILER("SolverFDDP::solve");
       return true;
     }
   }
+
+  std::cout << "Z1" << std::endl;
   STOP_PROFILER("SolverFDDP::solve");
   return false;
 }
