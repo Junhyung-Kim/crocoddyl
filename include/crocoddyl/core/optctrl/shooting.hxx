@@ -7,6 +7,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
+#define CROCODDYL_WITH_MULTITHREADING 1
+#define CROCODDYL_WITH_NTHREADS 5
 #ifdef CROCODDYL_WITH_MULTITHREADING
 #include <omp.h>
 #endif  // CROCODDYL_WITH_MULTITHREADING
@@ -61,7 +63,7 @@ ShootingProblemTpl<Scalar>::ShootingProblemTpl(
   allocateData();
 
 #ifdef CROCODDYL_WITH_MULTITHREADING
-  if (enableMultithreading()) {
+  if (false) {
     nthreads_ = CROCODDYL_WITH_NTHREADS;
   }
 #endif
@@ -123,7 +125,7 @@ ShootingProblemTpl<Scalar>::ShootingProblemTpl(
   }
 
 #ifdef CROCODDYL_WITH_MULTITHREADING
-  if (enableMultithreading()) {
+  if (false) {
     nthreads_ = CROCODDYL_WITH_NTHREADS;
   }
 #endif
@@ -480,7 +482,7 @@ void ShootingProblemTpl<Scalar>::set_nthreads(const int nthreads) {
 #ifndef CROCODDYL_WITH_MULTITHREADING
   (void)nthreads;
   std::cerr << "Warning: the number of threads won't affect the computational performance as multithreading "
-               "support is not enabled."
+               "support is not enabled111."
             << std::endl;
 #else
   if (nthreads < 1) {
@@ -488,9 +490,9 @@ void ShootingProblemTpl<Scalar>::set_nthreads(const int nthreads) {
   } else {
     nthreads_ = static_cast<std::size_t>(nthreads);
   }
-  if (enableMultithreading()) {
+  if (false) {
     std::cerr << "Warning: the number of threads won't affect the computational performance as multithreading "
-                 "support is not enabled."
+                 "support is not enabled222."
               << std::endl;
     nthreads_ = 1;
   }
@@ -516,7 +518,7 @@ template <typename Scalar>
 std::size_t ShootingProblemTpl<Scalar>::get_nthreads() const {
 #ifndef CROCODDYL_WITH_MULTITHREADING
   std::cerr << "Warning: the number of threads won't affect the computational performance as multithreading "
-               "support is not enabled."
+               "support is not enabled333."
             << std::endl;
 #endif
   return nthreads_;

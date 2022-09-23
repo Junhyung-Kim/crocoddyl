@@ -15,6 +15,7 @@ namespace crocoddyl {
 
 SolverBoxFDDP::SolverBoxFDDP(boost::shared_ptr<ShootingProblem> problem)
     : SolverFDDP(problem), qp_(problem->get_runningModels()[0]->get_nu(), 100, 0.1, 1e-5, 0.) {
+  std::cout << "222" << std::endl;
   allocateData();
 
   const std::size_t n_alphas = 10;

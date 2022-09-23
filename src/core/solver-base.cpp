@@ -6,6 +6,7 @@
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
+#define CROCODDYL_WITH_MULTITHREADING 1
 #ifdef CROCODDYL_WITH_MULTITHREADING
 #include <omp.h>
 #endif  // CROCODDYL_WITH_MULTITHREADING

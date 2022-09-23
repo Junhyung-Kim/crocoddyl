@@ -79,6 +79,20 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
     if (is_ru) {
       data->Lxu.topRows(2*nv).noalias() = Rq.transpose() * d->Arr_Ru;
     }
+  }
+  else if (is_rq && (is_rv == false) && is_rx) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rx = data->residual->Rx.rightCols(4);
+   // std::cout << "nr ss " << data->activation->Ar.size() << std::endl;
+    data->Lx.head(nv).noalias() = Rq.transpose() * data->activation->Ar;
+    data->Lx.tail(4).noalias() = Rx.transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rx;
+    data->Lxx.topLeftCorner(nv, nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(nv);
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rx.transpose() * d->Arr_Rx.rightCols(4);
+    /*if (is_ru) { //revise
+      data->Lxu.topRows(nv + 4).noalias() = Rq.transpose() * d->Arr_Ru;
+    }*/
   } else if (is_rq) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
     data->Lx.head(nv).noalias() = Rq.transpose() * data->activation->Ar;
@@ -128,7 +142,17 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
     data->Lx.head(2*nv).noalias() = Rq.transpose() * data->activation->Ar;
     d->Arr_Rx.leftCols(2*nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
     data->Lxx.topLeftCorner(2*nv, 2*nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(2*nv);
-  } else if (is_rq) {
+  } else if (is_rq && (is_rv == false) && is_rx == true) {
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rx = data->residual->Rx.rightCols(4);
+   // std::cout << "nr ss " << data->activation->Ar.size() << std::endl;
+    data->Lx.head(nv).noalias() = Rq.transpose() * data->activation->Ar;
+    data->Lx.tail(4).noalias() = Rx.transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rx;
+    data->Lxx.topLeftCorner(nv, nv).noalias() = Rq.transpose() * d->Arr_Rx.leftCols(nv);
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rx.transpose() * d->Arr_Rx.rightCols(4);
+  }  else if (is_rq) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(nv);
     data->Lx.head(nv).noalias() = Rq.transpose() * data->activation->Ar;
     d->Arr_Rx.leftCols(nv).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rq;

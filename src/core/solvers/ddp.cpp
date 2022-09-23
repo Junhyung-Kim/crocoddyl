@@ -62,20 +62,17 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
   for (iter_ = 0; iter_ < maxiter; ++iter_) {
     while (true) {
       try {
-        std::cout <<"Aaa" << std::endl;
         computeDirection(recalcDiff);
       } catch (std::exception& e) {
         std::cout <<"bbbb  " << e.what()<<std::endl;
         recalcDiff = false;
         increaseRegularization();
         if (xreg_ == reg_max_) {
-          std::cout << "fff" << std::endl;
           return false;
         } else {
           continue;
         }
       }
-      std::cout << "Ddd" << std::endl;
       break;
     }
     expectedImprovement();
@@ -102,8 +99,6 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
         }
       }
     }
-
-  std::cout << "Z4" << std::endl;
     if (steplength_ > th_stepdec_) {
       decreaseRegularization();
     }
@@ -115,18 +110,13 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
       }
     }
     stoppingCriteria();
-
-  std::cout << "Z3" << std::endl;
     const std::size_t n_callbacks = callbacks_.size();
     for (std::size_t c = 0; c < n_callbacks; ++c) {
       CallbackAbstract& callback = *callbacks_[c];
       callback(*this);
     }
-  std::cout << "Z2" << std::endl;
     if (was_feasible_ && stop_ < th_stop_) {
       STOP_PROFILER("SolverDDP::solve");
-
-  std::cout << "Z1" << std::endl;
       return true;
     }
   }
@@ -421,7 +411,7 @@ void SolverDDP::allocateData() {
     K_[t] = MatrixXdRowMajor::Zero(nu, ndx);
     k_[t] = Eigen::VectorXd::Zero(nu);
 
-    if (t == 0) {
+     if (t == 0) {
       xs_try_[t] = problem_->get_x0();
     } else {
       xs_try_[t] = model->get_state()->zero();
@@ -440,6 +430,8 @@ void SolverDDP::allocateData() {
 
   FxTVxx_p_ = MatrixXdRowMajor::Zero(ndx, ndx);
   fTVxx_p_ = Eigen::VectorXd::Zero(ndx);
+
+  std::cout <<"4444" << std::endl;
 }
 
 double SolverDDP::get_reg_incfactor() const { return reg_incfactor_; }

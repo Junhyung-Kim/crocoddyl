@@ -236,8 +236,7 @@ struct IntegratedActionDataRKTpl : public IntegratedActionDataAbstractTpl<_Scala
   std::vector<VectorXs> ws;  //!< Control inputs evaluated in the RK integration
   std::vector<VectorXs> dx_rk;
 
-  std::vector<MatrixXs>
-      dki_dx;  //!< List of partial derivatives of RK nodes with respect to the state of the RK integration. dki/dx
+  std::vector<MatrixXs> dki_dx;  //!< List of partial derivatives of RK nodes with respect to the state of the RK integration. dki/dx
   std::vector<MatrixXs> dki_du;  //!< List of partial derivatives of RK nodes with respect to the control parameters
                                  //!< of the RK integration. dki/du
 

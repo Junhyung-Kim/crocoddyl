@@ -12,8 +12,8 @@ template <typename Scalar>
 StateAbstractTpl<Scalar>::StateAbstractTpl(const std::size_t nx, const std::size_t ndx)
     : nx_(nx),
       ndx_(ndx + 4),
-      lb_(VectorXs::Constant(nx_, -std::numeric_limits<Scalar>::infinity())),
-      ub_(VectorXs::Constant(nx_, std::numeric_limits<Scalar>::infinity())),
+      lb_(VectorXs::Constant(nx_ + 4, -std::numeric_limits<Scalar>::infinity())),
+      ub_(VectorXs::Constant(nx_ + 4, std::numeric_limits<Scalar>::infinity())),
       has_limits_(false) {
   nv_ = ndx / 2;
   nq_ = nx_ - nv_;
@@ -23,8 +23,8 @@ template <typename Scalar>
 StateAbstractTpl<Scalar>::StateAbstractTpl()
     : nx_(0),
       ndx_(0),
-      lb_(MathBase::VectorXs::Constant(nx_, -std::numeric_limits<Scalar>::infinity())),
-      ub_(MathBase::VectorXs::Constant(nx_, std::numeric_limits<Scalar>::infinity())),
+      lb_(MathBase::VectorXs::Constant(nx_ + 4, -std::numeric_limits<Scalar>::infinity())),
+      ub_(MathBase::VectorXs::Constant(nx_ + 4, std::numeric_limits<Scalar>::infinity())),
       has_limits_(false) {}
 
 template <typename Scalar>
@@ -33,7 +33,7 @@ StateAbstractTpl<Scalar>::~StateAbstractTpl() {}
 template <typename Scalar>
 typename MathBaseTpl<Scalar>::VectorXs StateAbstractTpl<Scalar>::diff_dx(const Eigen::Ref<const VectorXs>& x0,
                                                                          const Eigen::Ref<const VectorXs>& x1) {
-  VectorXs dxout = VectorXs::Zero(ndx_);
+  VectorXs dxout = VectorXs::Zero(ndx_ + 4);
   diff(x0, x1, dxout);
   return dxout;
 }
@@ -41,7 +41,7 @@ typename MathBaseTpl<Scalar>::VectorXs StateAbstractTpl<Scalar>::diff_dx(const E
 template <typename Scalar>
 typename MathBaseTpl<Scalar>::VectorXs StateAbstractTpl<Scalar>::integrate_x(const Eigen::Ref<const VectorXs>& x,
                                                                              const Eigen::Ref<const VectorXs>& dx) {
-  VectorXs xout = VectorXs::Zero(nx_);
+  VectorXs xout = VectorXs::Zero(nx_ + 4);
   integrate(x, dx, xout);
   return xout;
 }
@@ -76,7 +76,7 @@ std::vector<typename MathBaseTpl<Scalar>::MatrixXs> StateAbstractTpl<Scalar>::Jd
 template <typename Scalar>
 std::vector<typename MathBaseTpl<Scalar>::MatrixXs> StateAbstractTpl<Scalar>::Jintegrate_Js(
     const Eigen::Ref<const VectorXs>& x, const Eigen::Ref<const VectorXs>& dx, const Jcomponent firstsecond) {
-  MatrixXs Jfirst(ndx_, ndx_), Jsecond(ndx_, ndx_);
+  MatrixXs Jfirst(ndx_ + 4, ndx_ + 4), Jsecond(ndx_ + 4, ndx_ + 4);
   Jfirst.setZero();
   Jsecond.setZero();
   std::vector<MatrixXs> Jacs;
@@ -137,7 +137,7 @@ bool StateAbstractTpl<Scalar>::get_has_limits() const {
 
 template <typename Scalar>
 void StateAbstractTpl<Scalar>::set_lb(const VectorXs& lb) {
-  if (static_cast<std::size_t>(lb.size()) != nx_) {
+  if (static_cast<std::size_t>(lb.size()) != nx_ + 4) {
     throw_pretty("Invalid argument: "
                  << "lower bound has wrong dimension (it should be " + std::to_string(nx_) + ")");
   }
@@ -147,7 +147,7 @@ void StateAbstractTpl<Scalar>::set_lb(const VectorXs& lb) {
 
 template <typename Scalar>
 void StateAbstractTpl<Scalar>::set_ub(const VectorXs& ub) {
-  if (static_cast<std::size_t>(ub.size()) != nx_) {
+  if (static_cast<std::size_t>(ub.size()) != nx_ + 4) {
     throw_pretty("Invalid argument: "
                  << "upper bound has wrong dimension (it should be " + std::to_string(nx_) + ")");
   }
