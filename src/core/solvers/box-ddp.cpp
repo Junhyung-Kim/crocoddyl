@@ -7,7 +7,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <iostream>
-
+#include <omp.h>
 #include "crocoddyl/core/solvers/box-ddp.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
@@ -117,6 +117,7 @@ void SolverBoxDDP::forwardPass(double steplength) {
   const std::size_t T = problem_->get_T();
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
+  #pragma omp parallel for num_threads(4)
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& m = models[t];
     const boost::shared_ptr<ActionDataAbstract>& d = datas[t];
@@ -134,6 +135,7 @@ void SolverBoxDDP::forwardPass(double steplength) {
       m->calc(d, xs_try_[t]);
     }
     xnext_ = d->xnext;
+   // #pragma omp simd reduction(+ : cost_try_)
     cost_try_ += d->cost;
 
     if (raiseIfNaN(cost_try_)) {

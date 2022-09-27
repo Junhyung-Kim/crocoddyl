@@ -173,6 +173,7 @@ void SolverFDDP::forwardPass(const double steplength) {
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
   if ((is_feasible_) || (steplength == 1)) {
+    #pragma omp parallel for num_threads(4)
     for (std::size_t t = 0; t < T; ++t) {
       const boost::shared_ptr<ActionModelAbstract>& m = models[t];
       const boost::shared_ptr<ActionDataAbstract>& d = datas[t];
@@ -187,6 +188,8 @@ void SolverFDDP::forwardPass(const double steplength) {
         m->calc(d, xs_try_[t]);
       }
       xnext_ = d->xnext;
+
+     // #pragma omp simd reduction(+ : cost_try_)
       cost_try_ += d->cost;
 
       if (raiseIfNaN(cost_try_)) {
@@ -210,6 +213,7 @@ void SolverFDDP::forwardPass(const double steplength) {
       throw_pretty("forward_error");
     }
   } else {
+    #pragma omp parallel for num_threads(4)
     for (std::size_t t = 0; t < T; ++t) {
       const boost::shared_ptr<ActionModelAbstract>& m = models[t];
       const boost::shared_ptr<ActionDataAbstract>& d = datas[t];
@@ -223,6 +227,8 @@ void SolverFDDP::forwardPass(const double steplength) {
         m->calc(d, xs_try_[t]);
       }
       xnext_ = d->xnext;
+
+     // #pragma omp simd reduction(+ : cost_try_)
       cost_try_ += d->cost;
 
       if (raiseIfNaN(cost_try_)) {
