@@ -299,7 +299,7 @@ void SolverDDP::forwardPass(const double steplength) {
   const std::size_t T = problem_->get_T();
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
-  #pragma omp parallel for num_threads(4)
+  //#pragma omp parallel for num_threads(4)
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& m = models[t];
     const boost::shared_ptr<ActionDataAbstract>& d = datas[t];
@@ -432,8 +432,6 @@ void SolverDDP::allocateData() {
 
   FxTVxx_p_ = MatrixXdRowMajor::Zero(ndx, ndx);
   fTVxx_p_ = Eigen::VectorXd::Zero(ndx);
-
-  std::cout <<"4444" << std::endl;
 }
 
 double SolverDDP::get_reg_incfactor() const { return reg_incfactor_; }

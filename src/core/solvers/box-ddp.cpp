@@ -117,7 +117,7 @@ void SolverBoxDDP::forwardPass(double steplength) {
   const std::size_t T = problem_->get_T();
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
-  #pragma omp parallel for num_threads(4)
+  //#pragma omp parallel for num_threads(4)
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& m = models[t];
     const boost::shared_ptr<ActionDataAbstract>& d = datas[t];

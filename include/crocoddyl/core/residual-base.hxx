@@ -15,7 +15,7 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
                                                            const std::size_t nr, const std::size_t nu,
                                                            const bool q_dependent, const bool v_dependent, 
                                                            const bool x_dependent, 
-                                                           const bool u_dependent)
+                                                           const bool u_dependent, const bool zmp_dependent)
     : state_(state),
       nr_(nr),
       nu_(nu),
@@ -23,12 +23,13 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
       q_dependent_(q_dependent),
       v_dependent_(v_dependent),
       x_dependent_(x_dependent),
-      u_dependent_(u_dependent) {}
+      u_dependent_(u_dependent),
+      zmp_dependent_(zmp_dependent) {}
 
 template <typename Scalar>
 ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<StateAbstract> state,
                                                            const std::size_t nr, const bool q_dependent,
-                                                           const bool v_dependent, const bool x_dependent, const bool u_dependent)
+                                                           const bool v_dependent, const bool x_dependent, const bool u_dependent, const bool zmp_dependent)
     : state_(state),
       nr_(nr),
       nu_(state->get_nv()),
@@ -36,7 +37,8 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
       q_dependent_(q_dependent),
       v_dependent_(v_dependent),
       x_dependent_(x_dependent),
-      u_dependent_(u_dependent) {}
+      u_dependent_(u_dependent),
+      zmp_dependent_(zmp_dependent) {}
 
 template <typename Scalar>
 ResidualModelAbstractTpl<Scalar>::~ResidualModelAbstractTpl() {}
@@ -101,6 +103,11 @@ bool ResidualModelAbstractTpl<Scalar>::get_v_dependent() const {
 template <typename Scalar>
 bool ResidualModelAbstractTpl<Scalar>::get_u_dependent() const {
   return u_dependent_;
+}
+
+template <typename Scalar>
+bool ResidualModelAbstractTpl<Scalar>::get_zmp_dependent() const {
+  return zmp_dependent_;
 }
 
 template <typename Scalar>
