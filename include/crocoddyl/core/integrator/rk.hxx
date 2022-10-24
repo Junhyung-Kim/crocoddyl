@@ -249,10 +249,8 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   state_->JintegrateTransport(x, d->dx, d->Fu, second);
 
   d->Fx.topRightCorner(4,2*nv).setZero();
-  d->Fx.bottomRightCorner(4,4)  << 1.0, 1.0 * time_step_, 0.0, 0.0, 10.0* time_step_, 1.0, -10.0 * time_step_, -1.0/70.0 * time_step_, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
-
-  d->Fu.bottomRightCorner(4,2) << 0.0, 0.0, 0.0, 0.0, time_step_, 0.0, time_step_, 0.0;
-
+  d->Fx.bottomRightCorner(4,4)  << 1.0, 1.0 * time_step_, 0.0, 0.0, 6.59308329* time_step_, 1.0, -6.59308329 * time_step_, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+  d->Fu.bottomRightCorner(4,2) << 0.0, 0.0, 0.0, -1.0/70.0 * time_step_, time_step_, 0.0, 0.0, time_step_;
 }
 
 template <typename Scalar>

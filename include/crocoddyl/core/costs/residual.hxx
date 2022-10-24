@@ -121,9 +121,9 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
   }
   else if (is_rzmp) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rzmp = data->residual->Rx.rightCols(2);
-    data->Lx.tail(1).noalias() = Rzmp.leftCols(1).transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rzmp.leftCols(1);
-    data->Lxx.bottomRightCorner(1, 1).noalias() = Rzmp.leftCols(1).transpose() * d->Arr_Rx.rightCols(2).leftCols(1);
+    data->Lx.tail(2).head(1).noalias() = Rzmp.leftCols(1).transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(2).leftCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rzmp.leftCols(1);
+    data->Lxx.bottomRightCorner(2, 2).topLeftCorner(1, 1).noalias() = Rzmp.leftCols(1).transpose() * d->Arr_Rx.rightCols(2).leftCols(1);
     if (is_ru) {
       data->Lxu.bottomRows(1).noalias() = Rzmp.leftCols(1).transpose() * d->Arr_Ru;
     }
@@ -180,9 +180,9 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
     data->Lxx.bottomRightCorner(4, 4).noalias() = Rv.transpose() * d->Arr_Rx.rightCols(4);
   } else if (is_rzmp) {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rzmp = data->residual->Rx.rightCols(2);
-    data->Lx.tail(1).noalias() = Rzmp.leftCols(1).transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rzmp.leftCols(1);
-    data->Lxx.bottomRightCorner(1, 1).noalias() = Rzmp.leftCols(1).transpose() * d->Arr_Rx.rightCols(2).leftCols(1);
+    data->Lx.tail(2).head(1).noalias() = Rzmp.leftCols(1).transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(2).leftCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rzmp.leftCols(1);
+    data->Lxx.bottomRightCorner(2, 2).topLeftCorner(1, 1).noalias() = Rzmp.leftCols(1).transpose() * d->Arr_Rx.rightCols(2).leftCols(1);
   }
 }
 
