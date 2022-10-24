@@ -86,6 +86,9 @@ void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionData
     d->cost = (d->integral[0] + Scalar(2.) * d->integral[1] + Scalar(2.) * d->integral[2] + d->integral[3]) *
               time_step_ / Scalar(6.);
   }
+
+  //d->dx.tail(4) = (d->ki[1] * time_step_).tail(4);
+  //d->cost.tail(4) = (d->integral[1] * time_step_).tail(4);
   state_->integrate(x, d->dx, d->xnext);
 
   if (with_cost_residual_) {
@@ -248,9 +251,9 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   state_->Jintegrate(x, d->dx, d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), d->Fx.topLeftCorner(state_->get_ndx(),state_->get_ndx()), first, addto);
   state_->JintegrateTransport(x, d->dx, d->Fu, second);
 
-  d->Fx.topRightCorner(4,2*nv).setZero();
-  d->Fx.bottomRightCorner(4,4)  << 1.0, 1.0 * time_step_, 0.0, 0.0, 6.59308329* time_step_, 1.0, -6.59308329 * time_step_, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
-  d->Fu.bottomRightCorner(4,2) << 0.0, 0.0, 0.0, -1.0/70.0 * time_step_, time_step_, 0.0, 0.0, time_step_;
+//  d->Fx.topRightCorner(4,2*nv).setZero();
+//  d->Fx.bottomRightCorner(4,4)  << 1.0, 1.0 * time_step_, 0.0, 0.0, 6.59308329* time_step_, 1.0, -6.59308329 * time_step_, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0;
+//  d->Fu.bottomRightCorner(4,2) << 0.0, 0.0, 0.0, -1.0/70.0 * time_step_, time_step_, 0.0, 0.0, time_step_;
 }
 
 template <typename Scalar>
