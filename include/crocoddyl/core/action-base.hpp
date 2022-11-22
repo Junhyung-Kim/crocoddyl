@@ -244,15 +244,15 @@ struct ActionDataAbstractTpl {
   template <template <typename Scalar> class Model>
   explicit ActionDataAbstractTpl(Model<Scalar>* const model)
       : cost(Scalar(0.)),
-        xnext(model->get_state()->get_nx()+4),
+        xnext(model->get_state()->get_nx()+ 8),
         Fx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Fu(model->get_state()->get_ndx(), model->get_nu()+2),
+        Fu(model->get_state()->get_ndx(), model->get_nu()+ 4),
         r(model->get_nr()),
         Lx(model->get_state()->get_ndx()),
-        Lu(model->get_nu()+2),
+        Lu(model->get_nu()+ 4),
         Lxx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu(model->get_state()->get_ndx(), model->get_nu()+2),
-        Luu(model->get_nu()+2, model->get_nu()+2){
+        Lxu(model->get_state()->get_ndx(), model->get_nu()+ 4),
+        Luu(model->get_nu()+ 4, model->get_nu()+ 4){
     xnext.setZero();
     Fx.setZero();
     Fu.setZero();

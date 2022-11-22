@@ -86,6 +86,9 @@ class StateAbstractTpl {
   virtual void diff(const Eigen::Ref<const VectorXs>& x0, const Eigen::Ref<const VectorXs>& x1,
                     Eigen::Ref<VectorXs> dxout) const = 0;
 
+ /* virtual void diff1(const Eigen::Ref<const VectorXs>& x0, const Eigen::Ref<const VectorXs>& x1,
+                    Eigen::Ref<VectorXs> dxout) const = 0;
+
   /**
    * @brief Compute the state manifold integration.
    *
@@ -142,6 +145,10 @@ class StateAbstractTpl {
                      Eigen::Ref<MatrixXs> Jfirst, Eigen::Ref<MatrixXs> Jsecond,
                      const Jcomponent firstsecond = both) const = 0;
 
+/*  virtual void Jdiff1(const Eigen::Ref<const VectorXs>& x0, const Eigen::Ref<const VectorXs>& x1,
+                     Eigen::Ref<MatrixXs> Jfirst, Eigen::Ref<MatrixXs> Jsecond,
+                     const Jcomponent firstsecond = both) const = 0;
+*/
   /**
    * @brief Compute the Jacobian of the state manifold integration.
    *

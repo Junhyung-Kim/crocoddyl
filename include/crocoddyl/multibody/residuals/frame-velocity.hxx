@@ -19,7 +19,7 @@ ResidualModelFrameVelocityTpl<Scalar>::ResidualModelFrameVelocityTpl(boost::shar
                                                                      const Motion& velocity,
                                                                      const pinocchio::ReferenceFrame type,
                                                                      const std::size_t nu)
-    : Base(state, 6, nu, true, true, false),
+    : Base(state, 6, nu, true, true, false, false, false),
       id_(id),
       vref_(velocity),
       type_(type),
@@ -30,7 +30,7 @@ ResidualModelFrameVelocityTpl<Scalar>::ResidualModelFrameVelocityTpl(boost::shar
                                                                      const pinocchio::FrameIndex id,
                                                                      const Motion& velocity,
                                                                      const pinocchio::ReferenceFrame type)
-    : Base(state, 6, true, true, false), id_(id), vref_(velocity), type_(type), pin_model_(state->get_pinocchio()) {}
+    : Base(state, 6, true, true, false, false, false), id_(id), vref_(velocity), type_(type), pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
 ResidualModelFrameVelocityTpl<Scalar>::~ResidualModelFrameVelocityTpl() {}

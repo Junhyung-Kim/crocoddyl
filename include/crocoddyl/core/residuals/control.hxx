@@ -25,7 +25,7 @@ ResidualModelControlTpl<Scalar>::ResidualModelControlTpl(boost::shared_ptr<typen
 template <typename Scalar>
 ResidualModelControlTpl<Scalar>::ResidualModelControlTpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                          const std::size_t nu)
-    : Base(state, nu, nu, false, false, false, true), uref_(VectorXs::Zero(nu)) {
+    : Base(state, nu, nu, false, false, false, true, false), uref_(VectorXs::Zero(nu)) {
   if (nu_ == 0) {
     throw_pretty("Invalid argument: "
                  << "it seems to be an autonomous system, if so, don't add this residual function");

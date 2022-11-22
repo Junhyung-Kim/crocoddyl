@@ -133,7 +133,7 @@ bool ActionModelAbstractTpl<Scalar>::get_has_control_limits() const {
 
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) {
-  if (static_cast<std::size_t>(u_lb.size()) != nu_ + 2) {
+  if (static_cast<std::size_t>(u_lb.size()) != nu_ + 4) {
     throw_pretty("Invalid argument: "
                  << "lower bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -143,7 +143,7 @@ void ActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) {
 
 template <typename Scalar>
 void ActionModelAbstractTpl<Scalar>::set_u_ub(const VectorXs& u_ub) {
-  if (static_cast<std::size_t>(u_ub.size()) != nu_ + 2) {
+  if (static_cast<std::size_t>(u_ub.size()) != nu_ + 4) {
     throw_pretty("Invalid argument: "
                  << "upper bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }

@@ -15,13 +15,13 @@ template <typename Scalar>
 ResidualModelFrameTranslationTpl<Scalar>::ResidualModelFrameTranslationTpl(boost::shared_ptr<StateMultibody> state,
                                                                            const pinocchio::FrameIndex id,
                                                                            const Vector3s& xref, const std::size_t nu)
-    : Base(state, 3, nu, true, false, false), id_(id), xref_(xref), pin_model_(state->get_pinocchio()) {}
+    : Base(state, 3, nu, true, false, false, false, false), id_(id), xref_(xref), pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
 ResidualModelFrameTranslationTpl<Scalar>::ResidualModelFrameTranslationTpl(boost::shared_ptr<StateMultibody> state,
                                                                            const pinocchio::FrameIndex id,
                                                                            const Vector3s& xref)
-    : Base(state, 3, true, false, false), id_(id), xref_(xref), pin_model_(state->get_pinocchio()) {}
+    : Base(state, 3, true, false, false, false, false), id_(id), xref_(xref), pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
 ResidualModelFrameTranslationTpl<Scalar>::~ResidualModelFrameTranslationTpl() {}

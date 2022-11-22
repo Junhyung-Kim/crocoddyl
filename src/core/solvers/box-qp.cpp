@@ -14,17 +14,17 @@ namespace crocoddyl {
 
 BoxQP::BoxQP(const std::size_t nx, const std::size_t maxiter, const double th_acceptstep, const double th_grad,
              const double reg)
-    : nx_(nx+2),
+    : nx_(nx+ 4),
       maxiter_(maxiter),
       th_acceptstep_(th_acceptstep),
       th_grad_(th_grad),
       reg_(reg),
       fold_(0.),
       fnew_(0.),
-      x_(nx+2),
-      xnew_(nx+2),
-      g_(nx+2),
-      dx_(nx+2) {
+      x_(nx+ 4),
+      xnew_(nx+ 4),
+      g_(nx+ 4),
+      dx_(nx+ 4) {
   // Check if values have a proper range
   if (0. >= th_acceptstep && th_acceptstep >= 0.5) {
     std::cerr << "Warning: th_acceptstep value should between 0 and 0.5" << std::endl;
