@@ -18,7 +18,7 @@ SolverDDP::SolverDDP(boost::shared_ptr<ShootingProblem> problem)
       reg_incfactor_(10.),
       reg_decfactor_(10.),
       reg_min_(1e-9),
-      reg_max_(1e9),
+      reg_max_(1e12),
       cost_try_(0.),
       th_grad_(1e-12),
       th_stepdec_(0.5),
@@ -64,7 +64,6 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
       try {
         computeDirection(recalcDiff);
       } catch (std::exception& e) {
-        std::cout <<"bbbb  " << e.what()<<std::endl;
         recalcDiff = false;
         increaseRegularization();
         if (xreg_ == reg_max_) {
@@ -106,6 +105,8 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
       increaseRegularization();
       if (xreg_ == reg_max_) {
         STOP_PROFILER("SolverDDP::solve");
+
+          std::cout << "regmax1" << std::endl;
         return false;
       }
     }
@@ -277,8 +278,6 @@ void SolverDDP::backwardPass() {
       Vx_[t].noalias() += Vxx_[t] * fs_[t];
     }
 
-
-
     if (raiseIfNaN(Vx_[t].lpNorm<Eigen::Infinity>())) {
       throw_pretty("backward_error");
     }
@@ -299,7 +298,7 @@ void SolverDDP::forwardPass(const double steplength) {
   const std::size_t T = problem_->get_T();
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
-  //#pragma omp parallel for num_threads(4)
+
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& m = models[t];
     const boost::shared_ptr<ActionDataAbstract>& d = datas[t];
@@ -314,7 +313,6 @@ void SolverDDP::forwardPass(const double steplength) {
       m->calc(d, xs_try_[t]);
     }
     xs_try_[t + 1] = d->xnext;
-   // #pragma omp simd reduction(+ : cost_try_)
     cost_try_ += d->cost;
 
     if (raiseIfNaN(cost_try_)) {

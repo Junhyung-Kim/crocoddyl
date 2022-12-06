@@ -145,11 +145,11 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
   const bool is_rx = residual_->get_x_dependent();
   const bool is_rzmp = residual_->get_zmp_dependent();
   const std::size_t nv = state_->get_nv();
-  if (is_rq && is_rv && is_rx &&(is_rzmp == false)) {std::cout <<"k6"<<std::endl;
+  if (is_rq && is_rv && is_rx &&(is_rzmp == false)) {
     data->Lx.noalias() = data->residual->Rx.transpose() * data->activation->Ar;
     d->Arr_Rx.noalias() = data->activation->Arr.diagonal().asDiagonal() * data->residual->Rx;
     data->Lxx.noalias() = data->residual->Rx.transpose() * d->Arr_Rx;
-  } else if (is_rq && is_rv && (is_rx == false)&&(is_rzmp == false)) {std::cout <<"k5"<<std::endl;
+  } else if (is_rq && is_rv && (is_rx == false)&&(is_rzmp == false)) {
     
 Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual->Rx.leftCols(2*nv);
     data->Lx.head(2*nv).noalias() = Rq.transpose() * data->activation->Ar;
