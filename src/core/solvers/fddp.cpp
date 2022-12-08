@@ -93,8 +93,6 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
       increaseRegularization();
       if (xreg_ == reg_max_) {
         STOP_PROFILER("SolverFDDP::solve");
-
-          std::cout << "regmax1" << std::endl;
         return false;
       }
     }

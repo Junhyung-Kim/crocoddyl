@@ -18,7 +18,7 @@ SolverDDP::SolverDDP(boost::shared_ptr<ShootingProblem> problem)
       reg_incfactor_(10.),
       reg_decfactor_(10.),
       reg_min_(1e-9),
-      reg_max_(1e12),
+      reg_max_(1e16),
       cost_try_(0.),
       th_grad_(1e-12),
       th_stepdec_(0.5),
@@ -32,8 +32,8 @@ SolverDDP::SolverDDP(boost::shared_ptr<ShootingProblem> problem)
   }
   if (th_stepinc_ < alphas_[n_alphas - 1]) {
     th_stepinc_ = alphas_[n_alphas - 1];
-    std::cerr << "Warning: th_stepinc has higher value than lowest alpha value, set to "
-              << std::to_string(alphas_[n_alphas - 1]) << std::endl;
+  //  std::cerr << "Warning: th_stepinc has higher value than lowest alpha value, set to "
+  //            << std::to_string(alphas_[n_alphas - 1]) << std::endl;
   }
 }
 
@@ -105,8 +105,6 @@ bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::ve
       increaseRegularization();
       if (xreg_ == reg_max_) {
         STOP_PROFILER("SolverDDP::solve");
-
-          std::cout << "regmax1" << std::endl;
         return false;
       }
     }
