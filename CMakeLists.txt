@@ -38,8 +38,8 @@ SET(CXX_DISABLE_WERROR False)
 SET(PROJECT_USE_CMAKE_EXPORT True)
 
 # Create different building options
-OPTION(ENABLE_VECTORIZATION "Enable vectorization and further processor-related optimizations" OFF)
-OPTION(BUILD_PYTHON_INTERFACE "Build the python binding" OFF)
+OPTION(ENABLE_VECTORIZATION "Enable vectorization and further processor-related optimizations" ON)
+OPTION(BUILD_PYTHON_INTERFACE "Build the python binding" ON)
 OPTION(BUILD_BENCHMARK "Build the benchmark" OFF)
 OPTION(BUILD_EXAMPLES "Build the examples" OFF)
 
