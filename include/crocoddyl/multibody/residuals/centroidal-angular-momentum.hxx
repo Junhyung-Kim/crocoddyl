@@ -7,6 +7,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <pinocchio/algorithm/centroidal-derivatives.hpp>
+#include <pinocchio/algorithm/centroidal.hpp>
+#include <pinocchio/algorithm/rnea-derivatives.hpp>
 #include "crocoddyl/multibody/residuals/centroidal-angular-momentum.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
@@ -76,5 +78,14 @@ namespace crocoddyl
   {
     const Eigen::IOFormat fmt(2, Eigen::DontAlignCols, ", ", ";\n", "", "", "[", "]");
     os << "ResidualModelCentroidalAngularMomentum {href=" << href_.transpose().format(fmt) << "}";
+  }
+  template <typename Scalar>
+  const typename MathBaseTpl<Scalar>::Vector6s& ResidualModelCentroidalAngularMomentumTpl<Scalar>::get_reference() const {
+    return href_;
+  }
+
+  template <typename Scalar>
+  void ResidualModelCentroidalAngularMomentumTpl<Scalar>::set_reference(const Vector6s& href) {
+    href_ = href;
   }
 } // namespace crocoddyl

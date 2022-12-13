@@ -1,10 +1,10 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.1)
 
 # Set up project properties
-SET(PROJECT_NAMESPACE loco-3d)
+SET(PROJECT_NAMESPACE Junhyung-Kim)
 SET(PROJECT_NAME crocoddyl)
 SET(PROJECT_DESCRIPTION "Contact RObot COntrol by Differential DYnamic programming Library (Crocoddyl)")
-#SET(PROJECT_URL https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME})
+SET(PROJECT_URL https://github.com/${PROJECT_NAMESPACE}/${PROJECT_NAME})
 
 # Check if the submodule cmake have been initialized
 IF(NOT EXISTS "${CMAKE_SOURCE_DIR}/cmake/base.cmake")

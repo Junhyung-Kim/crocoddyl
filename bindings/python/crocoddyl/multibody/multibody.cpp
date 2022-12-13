@@ -35,8 +35,11 @@ void exposeMultibody() {
   exposeDifferentialActionContactFwdDynamics();
   exposeActionImpulseFwdDynamics();
   exposeResidualState();
+  exposeResidualFlyState();
   exposeResidualCentroidalMomentum();
+  exposeResidualCentroidalAngularMomentum();
   exposeResidualCoMPosition();
+  exposeResidualCoMKinoPosition();
   exposeResidualContactForce();
   exposeResidualContactFrictionCone();
   exposeResidualContactCoPPosition();
@@ -44,6 +47,7 @@ void exposeMultibody() {
   exposeResidualContactControlGrav();
   exposeResidualControlGrav();
   exposeResidualFramePlacement();
+  exposeResidualKinoFramePlacement();
   exposeResidualFrameRotation();
   exposeResidualFrameTranslation();
   exposeResidualFrameVelocity();

@@ -11,7 +11,11 @@
 
 #include "crocoddyl/multibody/fwd.hpp"
 #include "crocoddyl/core/residual-base.hpp"
+#include "pinocchio/algorithm/kinematics.hpp"
+#include "pinocchio/algorithm/center-of-mass.hpp"
+#include "pinocchio/algorithm/jacobian.hpp"
 #include "crocoddyl/multibody/states/multibody.hpp"
+#include "crocoddyl/multibody/states/kinobody.hpp"
 #include "crocoddyl/multibody/data/multibody.hpp"
 
 namespace crocoddyl
@@ -72,6 +76,15 @@ namespace crocoddyl
     virtual void calcDiff(const boost::shared_ptr<ResidualDataAbstract> &data, const Eigen::Ref<const VectorXs> &x,
                           const Eigen::Ref<const VectorXs> &u);
     virtual boost::shared_ptr<ResidualDataAbstract> createData(DataCollectorAbstract *const data);
+  /**
+   * @brief Return the CoM position reference
+   */
+  const Vector3s& get_reference() const;
+
+  /**
+   * @brief Modify the CoM position reference
+   */
+  void set_reference(const Vector3s& cref);
 
     /**
      * @brief Print relevant information of the com-position residual
@@ -91,39 +104,6 @@ namespace crocoddyl
     Vector3s cref_;                                                          //!< Reference CoM position
     boost::shared_ptr<typename StateKinodynamic::PinocchioModel> pin_model_; //!< Pinocchio model
   };
-
-  template <typename _Scalar>
-  struct ResidualDataCoMPositionTpl : public ResidualDataAbstractTpl<_Scalar>
-  {
-    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
-
-    typedef _Scalar Scalar;
-    typedef MathBaseTpl<Scalar> MathBase;
-    typedef ResidualDataAbstractTpl<Scalar> Base;
-    typedef DataCollectorAbstractTpl<Scalar> DataCollectorAbstract;
-    typedef typename MathBase::Matrix3xs Matrix3xs;
-
-    template <template <typename Scalar> class Model>
-    ResidualDataCoMPositionTpl(Model<Scalar> *const model, DataCollectorAbstract *const data) : Base(model, data)
-    {
-      // Check that proper shared data has been passed
-      DataCollectorMultibodyTpl<Scalar> *d = dynamic_cast<DataCollectorMultibodyTpl<Scalar> *>(shared);
-      if (d == NULL)
-      {
-        throw_pretty("Invalid argument: the shared data should be derived from DataCollectorMultibody");
-      }
-
-      // Avoids data casting at runtime
-      pinocchio = d->pinocchio;
-    }
-
-    pinocchio::DataTpl<Scalar> *pinocchio; //!< Pinocchio data
-    using Base::r;
-    using Base::Ru;
-    using Base::Rx;
-    using Base::shared;
-  };
-
 } // namespace crocoddyl
 
 /* --- Details -------------------------------------------------------------- */

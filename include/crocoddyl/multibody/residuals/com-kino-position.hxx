@@ -68,5 +68,16 @@ namespace crocoddyl
     const Eigen::IOFormat fmt(2, Eigen::DontAlignCols, ", ", ";\n", "", "", "[", "]");
     os << "ResidualModelCoMPosition {cref=" << cref_.transpose().format(fmt) << "}";
   }
+
+
+template <typename Scalar>
+const typename MathBaseTpl<Scalar>::Vector3s& ResidualModelCoMKinoPositionTpl<Scalar>::get_reference() const {
+  return cref_;
+}
+
+template <typename Scalar>
+void ResidualModelCoMKinoPositionTpl<Scalar>::set_reference(const Vector3s& cref) {
+  cref_ = cref;
+}
 } // namespace crocoddyl
 
