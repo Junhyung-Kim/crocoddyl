@@ -19,6 +19,9 @@ template <typename Scalar>
 class ActuationModelFloatingBaseTpl;
 
 template <typename Scalar>
+class ActuationModelKinoBaseTpl;
+
+template <typename Scalar>
 class ActuationModelFullTpl;
 
 template <typename Scalar>
@@ -50,6 +53,11 @@ template <typename Scalar>
 class DifferentialActionModelContactFwdDynamicsTpl;
 template <typename Scalar>
 struct DifferentialActionDataContactFwdDynamicsTpl;
+
+template <typename Scalar>
+class DifferentialActionModelKinoDynamicsTpl;
+template <typename Scalar>
+struct DifferentialActionDataKinoDynamicsTpl;
 
 // numdiff
 template <typename Scalar>
@@ -92,11 +100,20 @@ template <typename Scalar>
 class ResidualModelCentroidalMomentumTpl;
 template <typename Scalar>
 struct ResidualDataCentroidalMomentumTpl;
+template <typename Scalar>
+class ResidualModelCentroidalAngularMomentumTpl;
+template <typename Scalar>
+struct ResidualDataCentroidalAngularMomentumTpl;
 
 template <typename Scalar>
 class ResidualModelCoMPositionTpl;
 template <typename Scalar>
 struct ResidualDataCoMPositionTpl;
+
+template <typename Scalar>
+class ResidualModelCoMKinoPositionTpl;
+template <typename Scalar>
+struct ResidualDataCoMKinoPositionTpl;
 
 template <typename Scalar>
 class ResidualModelContactForceTpl;
@@ -130,6 +147,9 @@ struct ResidualDataControlGravTpl;
 
 template <typename Scalar>
 class ResidualModelFramePlacementTpl;
+
+template <typename Scalar>
+class ResidualKinoFramePlacementTpl;
 template <typename Scalar>
 struct ResidualDataFramePlacementTpl;
 
@@ -140,6 +160,9 @@ struct ResidualDataFrameRotationTpl;
 
 template <typename Scalar>
 class ResidualModelFrameTranslationTpl;
+
+template <typename Scalar>
+class ResidualModelKinoFrameTranslationTpl;
 template <typename Scalar>
 struct ResidualDataFrameTranslationTpl;
 
@@ -155,6 +178,9 @@ struct ResidualDataImpulseCoMTpl;
 
 template <typename Scalar>
 class ResidualModelStateTpl;
+
+template <typename Scalar>
+class ResidualFlyStateTpl;
 template <typename Scalar>
 struct ResidualDataStateTpl;
 
@@ -304,6 +330,10 @@ class CoPSupportTpl;
 template <typename Scalar>
 class StateMultibodyTpl;
 
+// state
+template <typename Scalar>
+class StateKinodynamicTpl;
+
 // data collector
 template <typename Scalar>
 struct DataCollectorMultibodyTpl;
@@ -347,6 +377,7 @@ struct ImpulseDataMultipleTpl;
 /*******************************Template Instantiation**************************/
 
 typedef ActuationModelFloatingBaseTpl<double> ActuationModelFloatingBase;
+typedef ActuationModelKinoBaseTpl<double> ActuationModelKinoBase;
 typedef ActuationModelFullTpl<double> ActuationModelFull;
 typedef ActuationModelMultiCopterBaseTpl<double> ActuationModelMultiCopterBase;
 
@@ -358,6 +389,8 @@ typedef ContactDataAbstractTpl<double> ContactDataAbstract;
 typedef ActionModelImpulseFwdDynamicsTpl<double> ActionModelImpulseFwdDynamics;
 typedef ActionDataImpulseFwdDynamicsTpl<double> ActionDataImpulseFwdDynamics;
 
+typedef DifferentialActionModelKinoDynamicsTpl<double> DifferentialActionModelKinoDynamics;
+typedef DifferentialActionDataKinoDynamicsTpl<double> DifferentialActionDataKinoDynamics;
 typedef DifferentialActionModelFreeFwdDynamicsTpl<double> DifferentialActionModelFreeFwdDynamics;
 typedef DifferentialActionDataFreeFwdDynamicsTpl<double> DifferentialActionDataFreeFwdDynamics;
 typedef DifferentialActionModelContactFwdDynamicsTpl<double> DifferentialActionModelContactFwdDynamics;
@@ -382,9 +415,13 @@ DEPRECATED("Do not use FrameWrenchCone", typedef FrameWrenchConeTpl<double> Fram
 DEPRECATED("Do not use FrameCopSupport", typedef FrameCoPSupportTpl<double> FrameCoPSupport;)
 
 typedef ResidualModelCentroidalMomentumTpl<double> ResidualModelCentroidalMomentum;
+typedef ResidualModelCentroidalAngularMomentumTpl<double> ResidualModelCentroidalAngularMomentum;
 typedef ResidualDataCentroidalMomentumTpl<double> ResidualDataCentroidalMomentum;
+typedef ResidualDataCentroidalAngularMomentumTpl<double> ResidualDataCentroidalAngularMomentum;
 typedef ResidualModelCoMPositionTpl<double> ResidualModelCoMPosition;
 typedef ResidualDataCoMPositionTpl<double> ResidualDataCoMPosition;
+typedef ResidualModelCoMKinoPositionTpl<double> ResidualModelCoMKinoPosition;
+typedef ResidualDataCoMKinoPositionTpl<double> ResidualDataCoMKinoPosition;
 typedef ResidualModelContactForceTpl<double> ResidualModelContactForce;
 typedef ResidualDataContactForceTpl<double> ResidualDataContactForce;
 typedef ResidualModelContactFrictionConeTpl<double> ResidualModelContactFrictionCone;
@@ -398,17 +435,20 @@ typedef ResidualDataContactControlGravTpl<double> ResidualDataContactControlGrav
 typedef ResidualModelControlGravTpl<double> ResidualModelControlGrav;
 typedef ResidualDataControlGravTpl<double> ResidualDataControlGrav;
 typedef ResidualModelFramePlacementTpl<double> ResidualModelFramePlacement;
+typedef ResidualKinoFramePlacementTpl<double> ResidualKinoFramePlacement;
 typedef ResidualDataFramePlacementTpl<double> ResidualDataFramePlacement;
 typedef ResidualModelFrameRotationTpl<double> ResidualModelFrameRotation;
 typedef ResidualDataFrameRotationTpl<double> ResidualDataFrameRotation;
 typedef ResidualModelFrameTranslationTpl<double> ResidualModelFrameTranslation;
 typedef ResidualDataFrameTranslationTpl<double> ResidualDataFrameTranslation;
+typedef ResidualModelKinoFrameTranslationTpl<double> ResidualModelKinoFrameTranslation;
 typedef ResidualModelFrameVelocityTpl<double> ResidualModelFrameVelocity;
 typedef ResidualDataFrameVelocityTpl<double> ResidualDataFrameVelocity;
 typedef ResidualModelImpulseCoMTpl<double> ResidualModelImpulseCoM;
 typedef ResidualDataImpulseCoMTpl<double> ResidualDataImpulseCoM;
 typedef ResidualModelStateTpl<double> ResidualModelState;
 typedef ResidualDataStateTpl<double> ResidualDataState;
+typedef ResidualFlyStateTpl<double> ResidualFlyState;
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
 typedef ResidualModelPairCollisionTpl<double> ResidualModelPairCollision;
@@ -488,6 +528,7 @@ typedef ContactModel6DTpl<double> ContactModel6D;
 typedef ContactData6DTpl<double> ContactData6D;
 
 typedef StateMultibodyTpl<double> StateMultibody;
+typedef StateKinodynamicTpl<double> StateKinodynamic;
 
 typedef DataCollectorMultibodyTpl<double> DataCollectorMultibody;
 typedef DataCollectorActMultibodyTpl<double> DataCollectorActMultibody;

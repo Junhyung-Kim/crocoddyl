@@ -1,4 +1,3 @@
-
 ///////////////////////////////////////////////////////////////////////////////
 // BSD 3-Clause License
 //
@@ -7,59 +6,50 @@
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef BINDINGS_PYTHON_CROCODDYL_CORE_ACTUATION_BASE_HPP_
-#define BINDINGS_PYTHON_CROCODDYL_CORE_ACTUATION_BASE_HPP_
+#ifndef BINDINGS_PYTHON_CROCODDYL_CORE_ACTIVATION_BASE_HPP_
+#define BINDINGS_PYTHON_CROCODDYL_CORE_ACTIVATION_BASE_HPP_
 
-#include "crocoddyl/core/actuation-base.hpp"
+#include "crocoddyl/core/activation-base.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
-#include "python/crocoddyl/core/core.hpp"
 
 namespace crocoddyl {
 namespace python {
 
-class ActuationModelAbstract_wrap : public ActuationModelAbstract, public bp::wrapper<ActuationModelAbstract> {
+class ActivationModelAbstract_wrap : public ActivationModelAbstract, public bp::wrapper<ActivationModelAbstract> {
  public:
-  ActuationModelAbstract_wrap(boost::shared_ptr<StateAbstract> state, const std::size_t nu)
-      : ActuationModelAbstract(state, nu), bp::wrapper<ActuationModelAbstract>() {}
+  explicit ActivationModelAbstract_wrap(const std::size_t nr)
+      : ActivationModelAbstract(nr), bp::wrapper<ActivationModelAbstract>() {}
 
-  void calc(const boost::shared_ptr<ActuationDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& x,
-            const Eigen::Ref<const Eigen::VectorXd>& u) {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  void calc(const boost::shared_ptr<ActivationDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& r) {
+    if (static_cast<std::size_t>(r.size()) != nr_) {
       throw_pretty("Invalid argument: "
-                   << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
+                   << "r has wrong dimension (it should be " + std::to_string(nr_) + ")");
     }
-    if (static_cast<std::size_t>(u.size()) != nu_) {
-      throw_pretty("Invalid argument: "
-                   << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
-    }
-    return bp::call<void>(this->get_override("calc").ptr(), data, (Eigen::VectorXd)x, (Eigen::VectorXd)u);
+    return bp::call<void>(this->get_override("calc").ptr(), data, (Eigen::VectorXd)r);
   }
 
-  void calcDiff(const boost::shared_ptr<ActuationDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& x,
-                const Eigen::Ref<const Eigen::VectorXd>& u) {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx()) {
+  void calcDiff(const boost::shared_ptr<ActivationDataAbstract>& data, const Eigen::Ref<const Eigen::VectorXd>& r) {
+    if (static_cast<std::size_t>(r.size()) != nr_) {
       throw_pretty("Invalid argument: "
-                   << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
+                   << "r has wrong dimension (it should be " + std::to_string(nr_) + ")");
     }
-    if (static_cast<std::size_t>(u.size()) != nu_) {
-      throw_pretty("Invalid argument: "
-                   << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
-    }
-    return bp::call<void>(this->get_override("calcDiff").ptr(), data, (Eigen::VectorXd)x, (Eigen::VectorXd)u);
+    return bp::call<void>(this->get_override("calcDiff").ptr(), data, (Eigen::VectorXd)r);
   }
 
-  boost::shared_ptr<ActuationDataAbstract> createData() {
+  boost::shared_ptr<ActivationDataAbstract> createData() {
     enableMultithreading() = false;
     if (boost::python::override createData = this->get_override("createData")) {
-      return bp::call<boost::shared_ptr<ActuationDataAbstract> >(createData.ptr());
+      return bp::call<boost::shared_ptr<ActivationDataAbstract> >(createData.ptr());
     }
-    return ActuationModelAbstract::createData();
+    return ActivationModelAbstract::createData();
   }
 
-  boost::shared_ptr<ActuationDataAbstract> default_createData() { return this->ActuationModelAbstract::createData(); }
+  boost::shared_ptr<ActivationDataAbstract> default_createData() {
+    return this->ActivationModelAbstract::createData();
+  }
 };
 
 }  // namespace python
 }  // namespace crocoddyl
 
-#endif  // BINDINGS_PYTHON_CROCODDYL_CORE_ACTUATION_BASE_HPP_
+#endif  // BINDINGS_PYTHON_CROCODDYL_CORE_ACTIVATION_BASE_HPP_

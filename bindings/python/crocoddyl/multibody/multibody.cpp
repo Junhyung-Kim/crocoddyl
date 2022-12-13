@@ -17,7 +17,9 @@ void exposeMultibody() {
   exposeWrenchCone();
   exposeCoPSupport();
   exposeStateMultibody();
+  exposeStateKinodynamic();
   exposeActuationFloatingBase();
+  exposeActuationKinoBase();
   exposeActuationFull();
   exposeActuationModelMultiCopterBase();
   exposeForceAbstract();
@@ -29,6 +31,7 @@ void exposeMultibody() {
   exposeDataCollectorContacts();
   exposeDataCollectorImpulses();
   exposeDifferentialActionFreeFwdDynamics();
+  exposeDifferentialActionKinoDynamics();
   exposeDifferentialActionContactFwdDynamics();
   exposeActionImpulseFwdDynamics();
   exposeResidualState();
