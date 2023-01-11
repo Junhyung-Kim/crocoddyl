@@ -8,6 +8,8 @@
 
 #include "crocoddyl/multibody/residuals/com-kino-position.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
+#include "pinocchio/algorithm/center-of-mass.hpp"
+#include "pinocchio/algorithm/jacobian.hpp"
 
 namespace crocoddyl
 {
@@ -35,6 +37,7 @@ namespace crocoddyl
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
     data->r(2) = d->pinocchio->com[0](2) - 5.11307390e-01;
+    cref_ = data->r;
   }
 
   template <typename Scalar>

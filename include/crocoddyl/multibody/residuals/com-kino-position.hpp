@@ -12,11 +12,11 @@
 #include "crocoddyl/multibody/fwd.hpp"
 #include "crocoddyl/core/residual-base.hpp"
 #include "pinocchio/algorithm/kinematics.hpp"
-#include "pinocchio/algorithm/center-of-mass.hpp"
-#include "pinocchio/algorithm/jacobian.hpp"
 #include "crocoddyl/multibody/states/multibody.hpp"
-#include "crocoddyl/multibody/states/kinobody.hpp"
 #include "crocoddyl/multibody/data/multibody.hpp"
+#include "crocoddyl/multibody/states/kinobody.hpp"
+#include "crocoddyl/multibody/residuals/com-position.hpp"
+
 
 namespace crocoddyl
 {

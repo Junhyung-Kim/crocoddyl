@@ -49,6 +49,7 @@ void exposeMultibody() {
   exposeResidualFramePlacement();
   exposeResidualKinoFramePlacement();
   exposeResidualFrameRotation();
+  exposeResidualKinoFrameRotation();
   exposeResidualFrameTranslation();
   exposeResidualFrameVelocity();
   exposeResidualImpulseCoM();

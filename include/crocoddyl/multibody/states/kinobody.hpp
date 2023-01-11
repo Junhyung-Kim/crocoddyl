@@ -1,11 +1,3 @@
-///////////////////////////////////////////////////////////////////////////////
-// BSD 3-Clause License
-//
-// Copyright (C) 2019-2021, LAAS-CNRS, University of Edinburgh
-// Copyright note valid unless otherwise stated in individual files.
-// All rights reserved.
-///////////////////////////////////////////////////////////////////////////////
-
 #ifndef CROCODDYL_KINOBODY_STATES_MULTIBODY_HPP_
 #define CROCODDYL_KINOBODY_STATES_MULTIBODY_HPP_
 
@@ -66,6 +58,8 @@ namespace crocoddyl {
                             const Jcomponent firstsecond = both, const AssignmentOp = setto) const;
     virtual void JintegrateTransport(const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &dx,
                                      Eigen::Ref<MatrixXs> Jin, const Jcomponent firstsecond) const;
+
+    virtual VectorXs getFly(const VectorXs x0) const;
 
     /**
      * @brief Return the Pinocchio model (i.e., model of the rigid body system)

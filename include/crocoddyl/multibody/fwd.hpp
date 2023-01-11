@@ -150,6 +150,10 @@ class ResidualModelFramePlacementTpl;
 
 template <typename Scalar>
 class ResidualKinoFramePlacementTpl;
+
+template <typename Scalar>
+class ResidualKinoFrameRotationTpl;
+
 template <typename Scalar>
 struct ResidualDataFramePlacementTpl;
 
@@ -436,6 +440,7 @@ typedef ResidualModelControlGravTpl<double> ResidualModelControlGrav;
 typedef ResidualDataControlGravTpl<double> ResidualDataControlGrav;
 typedef ResidualModelFramePlacementTpl<double> ResidualModelFramePlacement;
 typedef ResidualKinoFramePlacementTpl<double> ResidualKinoFramePlacement;
+typedef ResidualKinoFrameRotationTpl<double> ResidualKinoFrameRotation;
 typedef ResidualDataFramePlacementTpl<double> ResidualDataFramePlacement;
 typedef ResidualModelFrameRotationTpl<double> ResidualModelFrameRotation;
 typedef ResidualDataFrameRotationTpl<double> ResidualDataFrameRotation;

@@ -52,6 +52,7 @@ void exposeResidualControlGrav();
 void exposeResidualFramePlacement();
 void exposeResidualKinoFramePlacement();
 void exposeResidualFrameRotation();
+void exposeResidualKinoFrameRotation();
 void exposeResidualFrameTranslation();
 void exposeResidualFrameVelocity();
 void exposeResidualImpulseCoM();

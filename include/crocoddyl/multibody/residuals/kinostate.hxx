@@ -61,6 +61,7 @@ namespace crocoddyl
     data->r.setZero();
     data->r.head(1) = x.tail(6).head(1);
     data->r.tail(1) = x.tail(2).head(1);
+    xref_ = data->r;
   }
 
   template <typename Scalar>

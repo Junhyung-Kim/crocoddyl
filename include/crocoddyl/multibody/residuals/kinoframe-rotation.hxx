@@ -7,12 +7,12 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include <pinocchio/algorithm/frames.hpp>
-#include "crocoddyl/multibody/residuals/frame-rotation.hpp"
+#include "crocoddyl/multibody/residuals/kinoframe-rotation.hpp"
 
 namespace crocoddyl {
 
 template <typename Scalar>
-ResidualModelFrameRotationTpl<Scalar>::ResidualModelFrameRotationTpl(boost::shared_ptr<StateMultibody> state,
+ResidualKinoFrameRotationTpl<Scalar>::ResidualKinoFrameRotationTpl(boost::shared_ptr<StateKinodynamic> state,
                                                                      const pinocchio::FrameIndex id,
                                                                      const Matrix3s& Rref, const std::size_t nu)
     : Base(state, 3, nu, true, false, false, false, false),
@@ -22,7 +22,7 @@ ResidualModelFrameRotationTpl<Scalar>::ResidualModelFrameRotationTpl(boost::shar
       pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
-ResidualModelFrameRotationTpl<Scalar>::ResidualModelFrameRotationTpl(boost::shared_ptr<StateMultibody> state,
+ResidualKinoFrameRotationTpl<Scalar>::ResidualKinoFrameRotationTpl(boost::shared_ptr<StateKinodynamic> state,
                                                                      const pinocchio::FrameIndex id,
                                                                      const Matrix3s& Rref)
     : Base(state, 3, true, false, false, false, false),
@@ -32,10 +32,10 @@ ResidualModelFrameRotationTpl<Scalar>::ResidualModelFrameRotationTpl(boost::shar
       pin_model_(state->get_pinocchio()) {}
 
 template <typename Scalar>
-ResidualModelFrameRotationTpl<Scalar>::~ResidualModelFrameRotationTpl() {}
+ResidualKinoFrameRotationTpl<Scalar>::~ResidualKinoFrameRotationTpl() {}
 
 template <typename Scalar>
-void ResidualModelFrameRotationTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract>& data,
+void ResidualKinoFrameRotationTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract>& data,
                                                  const Eigen::Ref<const VectorXs>&,
                                                  const Eigen::Ref<const VectorXs>&) {
   Data* d = static_cast<Data*>(data.get());
@@ -50,7 +50,7 @@ void ResidualModelFrameRotationTpl<Scalar>::calc(const boost::shared_ptr<Residua
 }
 
 template <typename Scalar>
-void ResidualModelFrameRotationTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract>& data,
+void ResidualKinoFrameRotationTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract>& data,
                                                      const Eigen::Ref<const VectorXs>&,
                                                      const Eigen::Ref<const VectorXs>&) {
   Data* d = static_cast<Data*>(data.get());
@@ -65,37 +65,37 @@ void ResidualModelFrameRotationTpl<Scalar>::calcDiff(const boost::shared_ptr<Res
 }
 
 template <typename Scalar>
-boost::shared_ptr<ResidualDataAbstractTpl<Scalar> > ResidualModelFrameRotationTpl<Scalar>::createData(
+boost::shared_ptr<ResidualDataAbstractTpl<Scalar> > ResidualKinoFrameRotationTpl<Scalar>::createData(
     DataCollectorAbstract* const data) {
   return boost::allocate_shared<Data>(Eigen::aligned_allocator<Data>(), this, data);
 }
 
 template <typename Scalar>
-void ResidualModelFrameRotationTpl<Scalar>::print(std::ostream& os) const {
+void ResidualKinoFrameRotationTpl<Scalar>::print(std::ostream& os) const {
   const Eigen::IOFormat fmt(2, Eigen::DontAlignCols, ", ", ";\n", "", "", "[", "]");
   typename pinocchio::SE3Tpl<Scalar>::Quaternion qref;
   pinocchio::quaternion::assignQuaternion(qref, Rref_);
-  os << "ResidualModelFrameRotation {frame=" << pin_model_->frames[id_].name
+  os << "ResidualKinoFrameRotation {frame=" << pin_model_->frames[id_].name
      << ", qref=" << qref.coeffs().transpose().format(fmt) << "}";
 }
 
 template <typename Scalar>
-pinocchio::FrameIndex ResidualModelFrameRotationTpl<Scalar>::get_id() const {
+pinocchio::FrameIndex ResidualKinoFrameRotationTpl<Scalar>::get_id() const {
   return id_;
 }
 
 template <typename Scalar>
-const typename MathBaseTpl<Scalar>::Matrix3s& ResidualModelFrameRotationTpl<Scalar>::get_reference() const {
+const typename MathBaseTpl<Scalar>::Matrix3s& ResidualKinoFrameRotationTpl<Scalar>::get_reference() const {
   return Rref_;
 }
 
 template <typename Scalar>
-void ResidualModelFrameRotationTpl<Scalar>::set_id(const pinocchio::FrameIndex id) {
+void ResidualKinoFrameRotationTpl<Scalar>::set_id(const pinocchio::FrameIndex id) {
   id_ = id;
 }
 
 template <typename Scalar>
-void ResidualModelFrameRotationTpl<Scalar>::set_reference(const Matrix3s& rotation) {
+void ResidualKinoFrameRotationTpl<Scalar>::set_reference(const Matrix3s& rotation) {
   Rref_ = rotation;
   oRf_inv_ = rotation.transpose();
 }

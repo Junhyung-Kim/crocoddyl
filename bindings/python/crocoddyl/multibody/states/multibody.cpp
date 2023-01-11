@@ -171,9 +171,11 @@ void exposeStateKinodynamic() {
            ":param firstsecond: derivative w.r.t x or dx")
       .add_property("pinocchio",
                     bp::make_function(&StateKinodynamic::get_pinocchio, bp::return_value_policy<bp::return_by_value>()),
-                    "pinocchio model");
+                    "pinocchio model")
+      .def("rand", &StateKinodynamic::getFly, bp::args("self"), bp::args("self", "x"),
+           "Return a random reference state.\n\n"
+           ":return random reference state");
 }
 
 }  // namespace python
 }  // namespace crocoddyl
-

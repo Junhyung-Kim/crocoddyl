@@ -8,6 +8,8 @@
 
 #include "crocoddyl/core/utils/exception.hpp"
 #include "crocoddyl/multibody/states/multibody.hpp"
+#include "pinocchio/algorithm/centroidal.hpp"
+#include "pinocchio/algorithm/center-of-mass.hpp"
 #include <pinocchio/algorithm/joint-configuration.hpp>
 
 namespace crocoddyl
@@ -372,4 +374,23 @@ namespace crocoddyl
     return pinocchio_;
   }
 
+  template <typename Scalar>
+  typename MathBaseTpl<Scalar>::VectorXs StateKinodynamicTpl<Scalar>::getFly(const VectorXs x0) const
+  {
+    pinocchio::Model model = *pinocchio_.get();
+    pinocchio::Data data(model);
+    pinocchio::centerOfMass(model, data, x0.head(nq_),x0.segment(nq_, nv_), false);
+    pinocchio::computeCentroidalMomentum(model, data, x0.head(nq_), x0.segment(nq_, nv_));
+    Eigen::VectorXd a;
+    a.resize(8);
+    a(0) = data.com[0](0);
+    a(1) = data.vcom[0](0);
+    a(3) = data.hg.toVector()(4);
+
+
+    a(4) = data.com[0](1);
+    a(5) = data.vcom[0](1);
+    a(7) = data.hg.toVector()(3);
+    return a;
+  }
 } // namespace crocoddyl

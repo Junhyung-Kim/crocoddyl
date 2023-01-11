@@ -44,8 +44,8 @@ namespace crocoddyl
     pinocchio::computeCentroidalMomentum(*pin_model_.get(), *d->pinocchio, q, v);
     data->r(0) = d->pinocchio->hg.toVector()(3) - x_state(7);
     data->r(1) = d->pinocchio->hg.toVector()(4) - x_state(3);
-    // std::cout << "data_>r" << std::endl;
-    // std::cout << data->r(0) <<" " << data->r(1)<< std::endl;
+    href_(0) = data->r(0);
+    href_(1) = data->r(1);
   }
 
   template <typename Scalar>
