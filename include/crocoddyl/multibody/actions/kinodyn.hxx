@@ -41,9 +41,15 @@ namespace crocoddyl
     temp.resize(actuation->get_nu() + 4);
     temp.setZero();
     temp.head(nu_) = pinocchio_.effortLimit.head(nu_);
-    temp(nu_) = 5;
+
+    for (int i =0; i < nu_; i++)
+    {
+      temp(i) = 2.0;
+    }
+
+    temp(nu_) = 0.5;
     temp(nu_ + 1) = 5;
-    temp(nu_ + 2) = 5;
+    temp(nu_ + 2) = 0.5;
     temp(nu_ + 3) = 5;
     Base::set_u_lb(Scalar(-1.) * temp);
     Base::set_u_ub(Scalar(+1.) * temp);
@@ -93,7 +99,7 @@ namespace crocoddyl
 
     d->xout = d->multibody.actuation->tau;
     d->xout = d->multibody.actuation->tau.segment(0, state_->get_nv());
-    d->xout2 << x_state[1], 6.59308329 * x_state[0] - 6.59308329 * x_state[2] - d->multibody.actuation->u_x[1] * 1.0 / 50.0, d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 6.59308329 * x_state[4] - 6.59308329 * x_state[6] + d->multibody.actuation->u_x[3] * 1.0 / 50.0, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3]; // d->dhg;
+    d->xout2 << x_state[1], 11.9411 * x_state[0] - 11.9411 * x_state[2] - d->multibody.actuation->u_x[1] * 1.0 / 78.8188, d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 11.9411 * x_state[4] - 11.9411 * x_state[6] + d->multibody.actuation->u_x[3] * 1.0 / 78.8188, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3]; // d->dhg;
 
     // Computing the cost value and residuals
     costs_->calc(d->costs, x, u);
@@ -143,13 +149,13 @@ namespace crocoddyl
     Data *d = static_cast<Data *>(data.get());
     actuation_->calcDiff(d->multibody.actuation, x, u);
 
-    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 6.59308329, 0.0, -6.59308329, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 6.59308329, 0.0, -6.59308329, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 
     // d->Fx.block(0, state_->get_nv(), state_->get_nv(), state_->get_nv()).setIdentity();
     d->Fu.topLeftCorner(nu_, nu_).setIdentity();
-    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0 / 50.0, 1.0, 0.0, 0.0, 1.0;
-    d->Fu.bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0 / 50.0, 1.0, 0.0, 0.0, 1.0;
+    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
+    d->Fu.bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
 
     /*
       std::cout << "d->Fx" << std::endl;

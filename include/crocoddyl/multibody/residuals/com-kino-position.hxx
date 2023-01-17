@@ -36,7 +36,7 @@ namespace crocoddyl
     pinocchio::centerOfMass(*pin_model_.get(), *d->pinocchio, q, false);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
-    data->r(2) = d->pinocchio->com[0](2) - 5.11307390e-01;
+    data->r(2) = d->pinocchio->com[0](2) - 0.82153224;
     cref_ = data->r;
   }
 
