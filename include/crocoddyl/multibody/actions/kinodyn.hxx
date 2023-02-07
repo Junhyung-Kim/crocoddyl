@@ -6,10 +6,6 @@
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "crocoddyl/core/utils/exception.hpp"
-#include "crocoddyl/core/utils/math.hpp"
-#include "crocoddyl/multibody/actions/kinodyn.hpp"
-
 #include <pinocchio/algorithm/compute-all-terms.hpp>
 #include <pinocchio/algorithm/frames.hpp>
 #include <pinocchio/algorithm/contact-dynamics.hpp>
@@ -17,6 +13,9 @@
 #include <pinocchio/algorithm/rnea.hpp>
 #include <pinocchio/algorithm/rnea-derivatives.hpp>
 #include <pinocchio/algorithm/kinematics-derivatives.hpp>
+#include "pinocchio/algorithm/kinematics.hpp"
+#include "pinocchio/algorithm/center-of-mass.hpp"
+#include "pinocchio/algorithm/jacobian.hpp"
 
 namespace crocoddyl
 {
@@ -76,32 +75,21 @@ namespace crocoddyl
 
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
+    //const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
-
+   // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
+    
     actuation_->calc(d->multibody.actuation, x, u);
-
-    // Computing the dynamics using ABA or manually for armature case
-    /* if (without_armature_) {
-       d->xout = pinocchio::aba(pinocchio_, d->pinocchio, q, v, d->multibody.actuation->tau.segment(0,state_->get_nv()));
-       pinocchio::updateGlobalPlacements(pinocchio_, d->pinocchio);
-     } else {
-
-       pinocchio::computeAllTerms(pinocchio_, d->pinocchio, q, v);
-       d->pinocchio.M.diagonal() += armature_;
-       pinocchio::cholesky::decompose(pinocchio_, d->pinocchio);
-       d->Minv.setZero();
-       pinocchio::cholesky::computeMinv(pinocchio_, d->pinocchio, d->Minv);
-       d->u_drift = d->multibody.actuation->tau - d->pinocchio.nle;
-       d->xout.noalias() = d->Minv * d->u_drift;
-     }*/
 
     d->xout = d->multibody.actuation->tau;
     d->xout = d->multibody.actuation->tau.segment(0, state_->get_nv());
     d->xout2 << x_state[1], 11.9411 * x_state[0] - 11.9411 * x_state[2] - d->multibody.actuation->u_x[1] * 1.0 / 78.8188, d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 11.9411 * x_state[4] - 11.9411 * x_state[6] + d->multibody.actuation->u_x[3] * 1.0 / 78.8188, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3]; // d->dhg;
-
-    // Computing the cost value and residuals
+    
+    pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 16);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 30);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
+  // pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
     costs_->calc(d->costs, x, u);
     d->cost = d->costs->cost;
   }
@@ -116,9 +104,13 @@ namespace crocoddyl
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
     Data *d = static_cast<Data *>(data.get());
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(),state_->get_nv());
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(4);
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
+  //  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
+    pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 16);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 30);
+    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
+  //  pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
 
     costs_->calc(d->costs, x);
     d->cost = d->costs->cost;
@@ -141,29 +133,22 @@ namespace crocoddyl
     }
 
     const std::size_t nv = state_->get_nv();
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(),nv);
-    // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
-    // onst Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(4);
-
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
+   // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
+   // const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
+    
     Data *d = static_cast<Data *>(data.get());
     actuation_->calcDiff(d->multibody.actuation, x, u);
-
+    pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
+  
     d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
     d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 
-    // d->Fx.block(0, state_->get_nv(), state_->get_nv(), state_->get_nv()).setIdentity();
     d->Fu.topLeftCorner(nu_, nu_).setIdentity();
     d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
     d->Fu.bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
-
-    /*
-      std::cout << "d->Fx" << std::endl;
-      std::cout << d->Fx << std::endl;
-
-      std::cout << "d->Fu" << std::endl;
-      std::cout << d->Fu << std::endl;
-    */
+    //pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v, a);
+  
     costs_->calcDiff(d->costs, x, u);
   }
 
@@ -177,6 +162,11 @@ namespace crocoddyl
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
     Data *d = static_cast<Data *>(data.get());
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
+  //  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
+    pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
+  
+   // pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v);
     costs_->calcDiff(d->costs, x);
   }
 

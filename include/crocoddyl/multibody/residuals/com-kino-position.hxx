@@ -31,9 +31,7 @@ namespace crocoddyl
   {
     // Compute the residual residual give the reference CoMPosition position
     Data *d = static_cast<Data *>(data.get());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
-    pinocchio::centerOfMass(*pin_model_.get(), *d->pinocchio, q, false);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
     data->r(2) = d->pinocchio->com[0](2) - 0.82153224;
@@ -47,8 +45,6 @@ namespace crocoddyl
   {
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-
-    pinocchio::jacobianCenterOfMass(*pin_model_.get(), *d->pinocchio, q, false);
 
     // Compute the derivatives of the frame placement
     const std::size_t nv = state_->get_nv();

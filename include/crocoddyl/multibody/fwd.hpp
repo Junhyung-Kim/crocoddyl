@@ -111,6 +111,9 @@ template <typename Scalar>
 struct ResidualDataCoMPositionTpl;
 
 template <typename Scalar>
+struct ResidualDataCoMPosition1Tpl;
+
+template <typename Scalar>
 class ResidualModelCoMKinoPositionTpl;
 template <typename Scalar>
 struct ResidualDataCoMKinoPositionTpl;
@@ -424,6 +427,7 @@ typedef ResidualDataCentroidalMomentumTpl<double> ResidualDataCentroidalMomentum
 typedef ResidualDataCentroidalAngularMomentumTpl<double> ResidualDataCentroidalAngularMomentum;
 typedef ResidualModelCoMPositionTpl<double> ResidualModelCoMPosition;
 typedef ResidualDataCoMPositionTpl<double> ResidualDataCoMPosition;
+typedef ResidualDataCoMPosition1Tpl<double> ResidualDataCoMPosition1;
 typedef ResidualModelCoMKinoPositionTpl<double> ResidualModelCoMKinoPosition;
 typedef ResidualDataCoMKinoPositionTpl<double> ResidualDataCoMKinoPosition;
 typedef ResidualModelContactForceTpl<double> ResidualModelContactForce;
@@ -469,6 +473,7 @@ DEPRECATED("Use ResidualDataCentroidalMomentum", typedef CostDataResidualTpl<dou
 DEPRECATED("Use ResidualModelCoMPosition with CostModelResidual",
            typedef CostModelCoMPositionTpl<double> CostModelCoMPosition;)
 DEPRECATED("Use ResidualDataCoMPosition", typedef CostDataResidualTpl<double> CostDataCoMPosition;)
+DEPRECATED("Use ResidualDataCoMPosition1", typedef CostDataResidualTpl<double> CostDataCoMPosition1;)
 DEPRECATED("Use ResidualModelFramePlacement with CostModelResidual",
            typedef CostModelFramePlacementTpl<double> CostModelFramePlacement;)
 DEPRECATED("Use ResidualDataFramePlacement", typedef CostDataResidualTpl<double> CostDataFramePlacement;)

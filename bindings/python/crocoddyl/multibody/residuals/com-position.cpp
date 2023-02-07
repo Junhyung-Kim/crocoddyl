@@ -136,18 +136,18 @@ void exposeResidualCoMKinoPosition() {
                     bp::make_function(&ResidualModelCoMKinoPosition::get_reference, bp::return_internal_reference<>()),
                     &ResidualModelCoMKinoPosition::set_reference, "reference CoM position");
 
-/*  bp::register_ptr_to_python<boost::shared_ptr<ResidualDataCoMPosition> >();
+  bp::register_ptr_to_python<boost::shared_ptr<ResidualDataCoMPosition1> >();
 
-  bp::class_<ResidualDataCoMPosition, bp::bases<ResidualDataAbstract> >(
-      "ResidualDataCoMPosition", "Data for CoM position residual.\n\n",
+  bp::class_<ResidualDataCoMPosition1, bp::bases<ResidualDataAbstract> >(
+      "ResidualDataCoMPosition1", "Data for CoM position residual.\n\n",
       bp::init<ResidualModelCoMKinoPosition*, DataCollectorAbstract*>(
           bp::args("self", "model", "data"),
           "Create CoM position residual data.\n\n"
           ":param model: CoM position residual model\n"
           ":param data: shared data")[bp::with_custodian_and_ward<1, 2, bp::with_custodian_and_ward<1, 3> >()])
       .add_property("pinocchio",
-                    bp::make_getter(&ResidualDataCoMPosition::pinocchio, bp::return_internal_reference<>()),
-                    "pinocchio data");*/
+                    bp::make_getter(&ResidualDataCoMPosition1::pinocchio, bp::return_internal_reference<>()),
+                    "pinocchio data");
 }
 
 }  // namespace python

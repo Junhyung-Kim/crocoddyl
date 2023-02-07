@@ -42,7 +42,6 @@ namespace crocoddyl
     Data *d = static_cast<Data *>(data.get());
 
     // Compute the frame placement w.r.t. the reference frame
-    pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
     d->rMf = oMf_inv_ * d->pinocchio->oMf[id_];
     data->r = pinocchio::log6(d->rMf).toVector();
     //std::cout << "aa" << std::endl;

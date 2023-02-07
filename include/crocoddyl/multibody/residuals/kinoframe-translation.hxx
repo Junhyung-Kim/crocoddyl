@@ -35,8 +35,6 @@ namespace crocoddyl
     // Compute the frame translation w.r.t. the reference frame
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    // pinocchio::forwardKinematics(*pin_model_.get(), *d->pinocchio, q);
-    pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
     data->r = d->pinocchio->oMf[id_].translation() - xref_;
   }
 
@@ -50,7 +48,6 @@ namespace crocoddyl
     // Compute the derivatives of the frame translation
     const std::size_t nv = state_->get_nv();
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    // pinocchio::computeJointJacobians(*pin_model_.get(), *d->pinocchio, q);
     pinocchio::getFrameJacobian(*pin_model_.get(), *d->pinocchio, id_, pinocchio::WORLD, d->fJf);
     d->Rx.leftCols(nv).noalias() = d->pinocchio->oMf[id_].rotation() * d->fJf.template topRows<3>();
   }

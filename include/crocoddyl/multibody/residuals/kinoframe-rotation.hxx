@@ -40,8 +40,6 @@ void ResidualKinoFrameRotationTpl<Scalar>::calc(const boost::shared_ptr<Residual
                                                  const Eigen::Ref<const VectorXs>&) {
   Data* d = static_cast<Data*>(data.get());
 
-  // Compute the frame rotation w.r.t. the reference frame
-  pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
   d->rRf.noalias() = oRf_inv_ * d->pinocchio->oMf[id_].rotation();
   data->r = pinocchio::log3(d->rRf);
   Rref_(0,0) = data->r(0);

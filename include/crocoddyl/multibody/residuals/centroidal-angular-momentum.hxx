@@ -5,12 +5,15 @@
 // Copyright note valid unless otherwise stated in individual files.
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
-
+#include "crocoddyl/multibody/residuals/centroidal-angular-momentum.hpp"
+#include "crocoddyl/core/utils/exception.hpp"
+#include "crocoddyl/core/utils/exception.hpp"
+#include "crocoddyl/core/utils/math.hpp"
+#include "crocoddyl/multibody/actions/kinodyn.hpp"
 #include <pinocchio/algorithm/centroidal-derivatives.hpp>
 #include <pinocchio/algorithm/centroidal.hpp>
 #include <pinocchio/algorithm/rnea-derivatives.hpp>
-#include "crocoddyl/multibody/residuals/centroidal-angular-momentum.hpp"
-#include "crocoddyl/core/utils/exception.hpp"
+#include <time.h>
 
 namespace crocoddyl
 {
@@ -34,14 +37,14 @@ namespace crocoddyl
                                                                const Eigen::Ref<const VectorXs> &x,
                                                                const Eigen::Ref<const VectorXs> &u)
   {
+    time_t start,start1, end;
     // Compute the residual residual give the reference centroidal momentum
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> u_state = u.tail(4);
-    pinocchio::computeCentroidalMomentum(*pin_model_.get(), *d->pinocchio, q, v);
+    
+    pinocchio::computeCentroidalMomentum(*pin_model_.get(), *d->pinocchio, q, v);  
     data->r(0) = d->pinocchio->hg.toVector()(3) - x_state(7);
     data->r(1) = d->pinocchio->hg.toVector()(4) - x_state(3);
     href_(0) = data->r(0);
@@ -58,8 +61,8 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
-    pinocchio::computeRNEADerivatives(*pin_model_.get(), *d->pinocchio, q, v, a);
-    pinocchio::getCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio, d->dh_dq, d->dhd_dq, d->dhd_dv, d->dhd_da);
+    //pinocchio::computeRNEADerivatives(*pin_model_.get(), *d->pinocchio, q, v, a);
+    pinocchio::computeCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio,  q, v, a, d->dh_dq, d->dhd_dq, d->dhd_dv, d->dhd_da);
     data->Rx.rightCols(1)(0) = -1;
     data->Rx.rightCols(5).leftCols(1)(1) = -1;
     data->Rx.leftCols(nv) = d->dh_dq.block(3, 0, 2, nv);

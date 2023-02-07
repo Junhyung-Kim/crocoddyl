@@ -41,7 +41,6 @@ SolverDDP::~SolverDDP() {}
 
 bool SolverDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::vector<Eigen::VectorXd>& init_us,
                       const std::size_t maxiter, const bool is_feasible, const double reginit) {
-                      std::cout << "Solve "<< std::endl;
   START_PROFILER("SolverDDP::solve");
   if (problem_->is_updated()) {
     resizeData();
