@@ -35,7 +35,7 @@ ResidualModelFramePlacementTpl<Scalar>::~ResidualModelFramePlacementTpl() {}
 
 template <typename Scalar>
 void ResidualModelFramePlacementTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract>& data,
-                                                  const Eigen::Ref<const VectorXs>&,
+                                                  const Eigen::Ref<const VectorXs>& x,
                                                   const Eigen::Ref<const VectorXs>&) {
   Data* d = static_cast<Data*>(data.get());
 

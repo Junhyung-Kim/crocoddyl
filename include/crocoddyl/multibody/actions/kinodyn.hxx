@@ -43,13 +43,13 @@ namespace crocoddyl
 
     for (int i =0; i < nu_; i++)
     {
-      temp(i) = 2.0;
+      temp(i) = 5.0;
     }
 
-    temp(nu_) = 0.5;
-    temp(nu_ + 1) = 5;
-    temp(nu_ + 2) = 0.5;
-    temp(nu_ + 3) = 5;
+    temp(nu_) = 300;
+    temp(nu_ + 1) = 300;
+    temp(nu_ + 2) = 30;
+    temp(nu_ + 3) = 30;
     Base::set_u_lb(Scalar(-1.) * temp);
     Base::set_u_ub(Scalar(+1.) * temp);
   }
@@ -83,12 +83,13 @@ namespace crocoddyl
 
     d->xout = d->multibody.actuation->tau;
     d->xout = d->multibody.actuation->tau.segment(0, state_->get_nv());
-    d->xout2 << x_state[1], 11.9411 * x_state[0] - 11.9411 * x_state[2] - d->multibody.actuation->u_x[1] * 1.0 / 78.8188, d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 11.9411 * x_state[4] - 11.9411 * x_state[6] + d->multibody.actuation->u_x[3] * 1.0 / 78.8188, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3]; // d->dhg;
+    d->xout2 << x_state[1], 12.3526 * x_state[0] - 12.3526 * x_state[2] - d->multibody.actuation->u_x[1] * 1.0 / 95.941282, d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 12.3526 * x_state[4] - 12.3526 * x_state[6] + d->multibody.actuation->u_x[3] * 1.0 / 95.941282, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3]; // d->dhg;
     
     pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 16);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 30);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
+    pinocchio::updateFramePlacements(pinocchio_, d->pinocchio);
+    //pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 37);
+    //pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 51);
+      //  pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
   // pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
     costs_->calc(d->costs, x, u);
     d->cost = d->costs->cost;
@@ -107,9 +108,11 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
   //  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 16);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 30);
-    pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
+
+    pinocchio::updateFramePlacements(pinocchio_, d->pinocchio);
+   // pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 37);
+  //  pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 51);
+  //  pinocchio::updateFramePlacement(pinocchio_, d->pinocchio, 2);
   //  pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
 
     costs_->calc(d->costs, x);
@@ -141,12 +144,12 @@ namespace crocoddyl
     actuation_->calcDiff(d->multibody.actuation, x, u);
     pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
   
-    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 11.9411, 0.0, -11.9411, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526, 0.0, -12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
+    d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526, 0.0, -12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
 
     d->Fu.topLeftCorner(nu_, nu_).setIdentity();
-    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
-    d->Fu.bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0 / 78.8188, 1.0, 0.0, 0.0, 1.0;
+    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0 / 95.941282, 1.0, 0.0, 0.0, 1.0;
+    d->Fu.bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0 / 95.941282, 1.0, 0.0, 0.0, 1.0;
     //pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v, a);
   
     costs_->calcDiff(d->costs, x, u);

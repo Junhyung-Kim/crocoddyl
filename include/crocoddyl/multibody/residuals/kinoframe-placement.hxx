@@ -36,17 +36,20 @@ namespace crocoddyl
 
   template <typename Scalar>
   void ResidualKinoFramePlacementTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract> &data,
-                                                   const Eigen::Ref<const VectorXs> &,
+                                                   const Eigen::Ref<const VectorXs> & x,
                                                    const Eigen::Ref<const VectorXs> &)
   {
     Data *d = static_cast<Data *>(data.get());
-
     // Compute the frame placement w.r.t. the reference frame
     d->rMf = oMf_inv_ * d->pinocchio->oMf[id_];
     data->r = pinocchio::log6(d->rMf).toVector();
     //std::cout << "aa" << std::endl;
     //std::cout << pref_ << std::endl;
-    pref_.rotation().setZero();
+    //pref_ = d->pinocchio->oMf[id_];
+    /*pref_.translation()(0) =  x(0);
+    pref_.translation()(1) =  x(1);
+    pref_.translation()(2) =  x(2);
+   */ pref_.rotation().setZero();
     pref_.translation() = data->r.head(3);
     pref_.rotation()(0,0) = data->r(3);
     pref_.rotation()(1,1) = data->r(4);

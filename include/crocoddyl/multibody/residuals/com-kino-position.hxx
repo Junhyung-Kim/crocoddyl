@@ -15,12 +15,12 @@ namespace crocoddyl
 {
 
   template <typename Scalar>
-  ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const std::size_t nu)
-      : Base(state, 3, nu, true, false, true, false, false), pin_model_(state->get_pinocchio()) {}
+  ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref, const std::size_t nu)
+      : Base(state, 3, nu, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
 
   template <typename Scalar>
-  ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state)
-      : Base(state, 3, true, false, true, false, false), pin_model_(state->get_pinocchio()) {}
+  ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref)
+      : Base(state, 3, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
 
   template <typename Scalar>
   ResidualModelCoMKinoPositionTpl<Scalar>::~ResidualModelCoMKinoPositionTpl() {}
@@ -34,8 +34,8 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
-    data->r(2) = d->pinocchio->com[0](2) - 0.82153224;
-    cref_ = data->r;
+    data->r(2) = d->pinocchio->com[0](2) - cref_(2);
+    //cref_ = data->r;
   }
 
   template <typename Scalar>

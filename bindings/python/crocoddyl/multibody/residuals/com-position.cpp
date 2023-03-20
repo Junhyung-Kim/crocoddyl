@@ -92,13 +92,13 @@ void exposeResidualCoMKinoPosition() {
       "ResidualModelCoMKinoPosition",
       "This residual function defines the CoM tracking as r = c - cref, with c and cref as the current and reference "
       "CoM position, respectively.",
-      bp::init<boost::shared_ptr<StateKinodynamic>, std::size_t>(
-          bp::args("self", "state", "nu"),
+      bp::init<boost::shared_ptr<StateKinodynamic>, Eigen::Vector3d, std::size_t>(
+          bp::args("self", "state", "cref", "nu"),
           "Initialize the CoM position residual model.\n\n"
           ":param state: state of the multibody system\n"
           ":param nu: dimension of control vector"))
-      .def(bp::init<boost::shared_ptr<StateKinodynamic>>(
-          bp::args("self", "state"),
+      .def(bp::init<boost::shared_ptr<StateKinodynamic>, Eigen::Vector3d>(
+          bp::args("self", "state", "cref"),
           "Initialize the CoM position residual model.\n\n"
           "The default nu is obtained from state.nv.\n"
           ":param state: state of the multibody system\n"))

@@ -41,7 +41,7 @@ namespace crocoddyl
      * @param[in] cref   Reference CoM position
      * @param[in] nu     Dimension of the control vector
      */
-    ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const std::size_t nu);
+    ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref,const std::size_t nu);
 
     /**
      * @brief Initialize the CoM position residual model
@@ -51,7 +51,7 @@ namespace crocoddyl
      * @param[in] state  State of the multibody system
      * @param[in] cref   Reference CoM position
      */
-    ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state);
+    ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref);
     virtual ~ResidualModelCoMKinoPositionTpl();
 
     /**

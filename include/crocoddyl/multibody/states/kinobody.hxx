@@ -36,14 +36,16 @@ namespace crocoddyl
     ub_.segment(nq0, nq_ - nq0) = pinocchio_->upperPositionLimit.tail(nq_ - nq0);
     lb_.segment(nq_, nv_) = -pinocchio_->velocityLimit;
     ub_.segment(nq_, nv_) = pinocchio_->velocityLimit;
-    lb_.tail(8).head(3) = -1.0 * VectorXs::Ones(3);
-    ub_.tail(8).head(3) = 1.0 * VectorXs::Ones(3);
-    lb_.tail(4).head(3) = -1.0 * VectorXs::Ones(3);
-    ub_.tail(4).head(3) = 1.0 * VectorXs::Ones(3);
-    lb_.tail(5).head(1) = -5.0 * VectorXs::Ones(1);
-    ub_.tail(5).head(1) = 5.0 * VectorXs::Ones(1);
-    lb_.tail(1) = -5.0 * VectorXs::Ones(1);
-    ub_.tail(1) = 5.0 * VectorXs::Ones(1);
+    
+    /*lb_.tail(8).head(3) = -10.0 * VectorXs::Ones(3);
+    ub_.tail(8).head(3) = 10.0 * VectorXs::Ones(3);
+    lb_.tail(4).head(3) = -10.0 * VectorXs::Ones(3);
+    ub_.tail(4).head(3) = 10.0 * VectorXs::Ones(3);
+    lb_.tail(5).head(1) = -10.0 * VectorXs::Ones(1);
+    ub_.tail(5).head(1) = 10.0 * VectorXs::Ones(1);
+    lb_.tail(1) = -10.0 * VectorXs::Ones(1);
+    ub_.tail(1) = 10.0 * VectorXs::Ones(1);
+    */
     Base::update_has_limits();
   }
 

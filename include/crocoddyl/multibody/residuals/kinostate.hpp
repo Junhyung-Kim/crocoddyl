@@ -136,6 +136,7 @@ namespace crocoddyl
 
   private:
     VectorXs xref_; //!< Reference state
+    VectorXs xref1_; //!< Reference state
   };
 
 } // namespace crocoddyl
