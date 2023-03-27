@@ -254,7 +254,7 @@ ujump0 = [u for u in ddp.us]
 # Jump with frontal scissors.
 PHASE_NAME = "frontal"
 
-fig = high + 2
+fig = high + 4
 x = x0.copy()
 x[9] = 1.
 x[15] = -1.
@@ -282,7 +282,7 @@ PHASE_NAME = "lateral"
 
 ddp.setCandidate(xs=xjump0, us=ujump0)
 
-fig = high + 2
+fig = high + 4
 x = x0.copy()
 x[8] = .8
 x[14] = -.8

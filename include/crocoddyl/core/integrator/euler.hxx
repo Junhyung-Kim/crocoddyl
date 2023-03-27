@@ -51,6 +51,8 @@ void IntegratedActionModelEulerTpl<Scalar>::calc(const boost::shared_ptr<ActionD
   d->dx.head(nv).noalias() = v * time_step_ + a * time_step2_;
   d->dx.segment(nv,nv).noalias() = a * time_step_;
   d->dx.tail(8).noalias() = a1 * time_step_;
+  d->dx.tail(4).head(1).noalias() += a1.tail(3).head(1) * time_step2_;
+  d->dx.tail(8).head(1).noalias() += a1.tail(7).head(1) * time_step2_;
   differential_->get_state()->integrate(x, d->dx, d->xnext);
   d->cost = time_step_ * d->differential->cost;
   if (with_cost_residual_) {
@@ -97,6 +99,8 @@ void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<Act
   control_->multiplyByJacobian(d->control, da_du, d->da_du);
   d->Fx.topRows(nv).noalias() = da_dx.topRows(nv) * time_step2_;
   d->Fx.bottomRows(nv + 8).noalias() = da_dx * time_step_;
+  d->Fx.bottomRows(8).topRows(1).noalias() += da_dx.bottomRows(7).topRows(1) * time_step2_;
+  d->Fx.bottomRows(4).topRows(1).noalias() += da_dx.bottomRows(3).topRows(1) * time_step2_;
   d->Fx.topRightCorner(nv + 8, nv + 8).topLeftCorner(nv, nv).diagonal().array() += Scalar(time_step_);
   d->Fu.topRows(nv).noalias() = time_step2_ * d->da_du.topRows(nv);
   d->Fu.bottomRows(nv + 8).noalias() = time_step_ * d->da_du;
@@ -112,6 +116,12 @@ void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<Act
   control_->multiplyByJacobian(d->control, d->differential->Luu, d->Lwu);
   control_->multiplyJacobianTransposeBy(d->control, d->Lwu, d->Luu);
   d->Luu *= time_step_;
+/*
+  std::cout << "d->Fx" << std::endl;
+  std::cout << d->Fx << std::endl;
+  std::cout << "d->Fu" << std::endl;
+  std::cout << d->Fu << std::endl;
+*/
 }
 
 template <typename Scalar>
@@ -175,3 +185,4 @@ void IntegratedActionModelEulerTpl<Scalar>::print(std::ostream& os) const {
 }
 
 }  // namespace crocoddyl
+

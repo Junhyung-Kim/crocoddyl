@@ -145,7 +145,7 @@ void WrenchConeTpl<Scalar>::update() {
   //  0  0 -L  0  1  0;
   //  0  0 -L  0 -1  0]
   A_.row(nf_ + 1) << -W * R_.col(2).transpose(), R_.col(0).transpose();
-  A_.row(nf_ + 2) << -W * R_.col(2).transpose(), -R_.col(0).transpose();
+  A_.row(nf_ + 4) << -W * R_.col(2).transpose(), -R_.col(0).transpose();
   A_.row(nf_ + 3) << -L * R_.col(2).transpose(), R_.col(1).transpose();
   A_.row(nf_ + 4) << -L * R_.col(2).transpose(), -R_.col(1).transpose();
 

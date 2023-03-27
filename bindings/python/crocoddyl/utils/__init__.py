@@ -484,9 +484,9 @@ class IntegratedActionModelRK4Derived(crocoddyl.ActionModelAbstract):
         data.int[3] = data.differential[3].cost
         data.ki[3] = np.concatenate([data.y[3][nq:], data.acc[3]])
         if (self.enable_integration):
-            data.dx = (data.ki[0] + 2. * data.ki[1] + 2. * data.ki[2] + data.ki[3]) * dt / 6
+            data.dx = (data.ki[0] + 4. * data.ki[1] + 4. * data.ki[2] + data.ki[3]) * dt / 6
             data.xnext = self.differential.state.integrate(x, data.dx)
-            data.cost = (data.int[0] + 2 * data.int[1] + 2 * data.int[2] + data.int[3]) * dt / 6
+            data.cost = (data.int[0] + 4 * data.int[1] + 4 * data.int[2] + data.int[3]) * dt / 6
         else:
             data.dx = np.zeros([self.ndx])
             data.xnext = x
@@ -543,19 +543,19 @@ class IntegratedActionModelRK4Derived(crocoddyl.ActionModelAbstract):
                     data.dy_dx[i].T, np.dot(data.differential[i].Lxx, data.dy_du[i]))
 
             dxnext_dx, dxnext_ddx = self.state.Jintegrate(x, data.dx)
-            ddx_dx = (data.dki_dx[0] + 2. * data.dki_dx[1] + 2. * data.dki_dx[2] + data.dki_dx[3]) * dt / 6
-            data.ddx_du = (data.dki_du[0] + 2. * data.dki_du[1] + 2. * data.dki_du[2] + data.dki_du[3]) * dt / 6
+            ddx_dx = (data.dki_dx[0] + 4. * data.dki_dx[1] + 4. * data.dki_dx[2] + data.dki_dx[3]) * dt / 6
+            data.ddx_du = (data.dki_du[0] + 4. * data.dki_du[1] + 4. * data.dki_du[2] + data.dki_du[3]) * dt / 6
             data.Fx[:] = dxnext_dx + np.dot(dxnext_ddx, ddx_dx)
             data.Fu[:] = np.dot(dxnext_ddx, data.ddx_du)
 
-            data.Lx[:] = (data.dli_dx[0] + 2. * data.dli_dx[1] + 2. * data.dli_dx[2] + data.dli_dx[3]) * dt / 6
-            data.Lu[:] = (data.dli_du[0] + 2. * data.dli_du[1] + 2. * data.dli_du[2] + data.dli_du[3]) * dt / 6
+            data.Lx[:] = (data.dli_dx[0] + 4. * data.dli_dx[1] + 4. * data.dli_dx[2] + data.dli_dx[3]) * dt / 6
+            data.Lu[:] = (data.dli_du[0] + 4. * data.dli_du[1] + 4. * data.dli_du[2] + data.dli_du[3]) * dt / 6
 
-            data.Lxx[:] = (data.ddli_ddx[0] + 2. * data.ddli_ddx[1] + 2. * data.ddli_ddx[2] +
+            data.Lxx[:] = (data.ddli_ddx[0] + 4. * data.ddli_ddx[1] + 4. * data.ddli_ddx[2] +
                            data.ddli_ddx[3]) * dt / 6
-            data.Luu[:] = (data.ddli_ddu[0] + 2. * data.ddli_ddu[1] + 2. * data.ddli_ddu[2] +
+            data.Luu[:] = (data.ddli_ddu[0] + 4. * data.ddli_ddu[1] + 4. * data.ddli_ddu[2] +
                            data.ddli_ddu[3]) * dt / 6
-            data.Lxu[:] = (data.ddli_dxdu[0] + 2. * data.ddli_dxdu[1] + 2. * data.ddli_dxdu[2] +
+            data.Lxu[:] = (data.ddli_dxdu[0] + 4. * data.ddli_dxdu[1] + 4. * data.ddli_dxdu[2] +
                            data.ddli_dxdu[3]) * dt / 6
             data.Lux = data.Lxu.T
         else:

@@ -22,8 +22,8 @@ namespace crocoddyl
       throw_pretty("Invalid argument: "
                    << "xref has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
-    std::cout << "xref_" << std::endl;
-    std::cout << xref_.transpose() << std::endl;
+  //  std::cout << "xref_" << std::endl;
+  //  std::cout << xref_.transpose() << std::endl;
   }
 
   template <typename Scalar>
@@ -41,7 +41,7 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const std::size_t nu)
-      : Base(state, 2, nu, false, false, false, false, true), xref_(state->zero()) {std::cout << "zmp bound" <<std::endl;}
+      : Base(state, 2, nu, false, false, false, false, true), xref_(state->zero()) {}
 
   template <typename Scalar>
   ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state)

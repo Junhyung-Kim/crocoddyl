@@ -62,11 +62,32 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
     //pinocchio::computeRNEADerivatives(*pin_model_.get(), *d->pinocchio, q, v, a);
-    pinocchio::computeCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio,  q, v, a, d->dh_dq, d->dhd_dq, d->dhd_dv, d->dhd_da);
-    data->Rx.rightCols(1)(0) = -1;
-    data->Rx.rightCols(5).leftCols(1)(1) = -1;
+    pinocchio::getCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio, d->dh_dq, d->dhd_dq, d->dhd_dv, d->dhd_da);
+    //pinocchio::computeCentroidalMap(*pin_model_.get(), *d->pinocchio, q);
+    //pinocchio::computeCentroidalMapTimeVariation(*pin_model_.get(), *d->pinocchio, q, v);
+    //data->Rx.rightCols(1)(0) = -1;
+    data->Rx.bottomRightCorner(2, 5).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
+    data->Rx.bottomRightCorner(2, 1).topLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
+    //data->Rx.rightCols(5).leftCols(1)(1) = -1;
     data->Rx.leftCols(nv) = d->dh_dq.block(3, 0, 2, nv);
     data->Rx.block(0, nv, 2, nv) = d->dhd_da.block(3, 0, 2, nv);
+    //data->Rx.block(0, nv, 2, nv) = d->pinocchio->Ag.block(3, 0, 2, nv);
+  /*
+    std::cout << "aaa" << std::endl;
+    std::cout << d->dhd_dv<< std::endl;
+    std::cout << "bbb" << std::endl;
+    std::cout << d->pinocchio->dAg << std::endl;
+    std::cout << "cccc" << std::endl;
+    std::cout << d->dh_dq << std::endl;
+
+    std::cout << "dddd" << std::endl;
+    std::cout << d->dhd_da << std::endl;
+  
+    std::cout << "aaa" << std::endl;
+    std::cout << d->dhd_da<< std::endl;
+    std::cout << "bbb" << std::endl;
+    std::cout << d->pinocchio->Ag << std::endl;
+  */
   }
 
   template <typename Scalar>
