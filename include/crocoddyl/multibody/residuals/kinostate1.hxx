@@ -6,14 +6,14 @@
 // All rights reserved.
 ///////////////////////////////////////////////////////////////////////////////
 
-#include "crocoddyl/multibody/residuals/kinostate.hpp"
+#include "crocoddyl/multibody/residuals/kinostate1.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
 
 namespace crocoddyl
 {
 
   template <typename Scalar>
-  ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state,
+  ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref, const std::size_t nu)
       : Base(state, 2, nu, false, false, false, false, true), xref_(xref)
   {
@@ -25,7 +25,7 @@ namespace crocoddyl
   }
 
   template <typename Scalar>
-  ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state,
+  ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref)
       : Base(state, 2, false, false, false, false, true), xref_(xref)
   {
@@ -37,19 +37,19 @@ namespace crocoddyl
   }
 
   template <typename Scalar>
-  ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state,
+  ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const std::size_t nu)
       : Base(state, 2, nu, false, false, false, false, true), xref_(state->zero()) {}
 
   template <typename Scalar>
-  ResidualFlyStateTpl<Scalar>::ResidualFlyStateTpl(boost::shared_ptr<typename Base::StateAbstract> state)
+  ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state)
       : Base(state, 2, false, false, false, false, true), xref_(state->zero()) {}
 
   template <typename Scalar>
-  ResidualFlyStateTpl<Scalar>::~ResidualFlyStateTpl() {}
+  ResidualFlyState1Tpl<Scalar>::~ResidualFlyState1Tpl() {}
 
   template <typename Scalar>
-  void ResidualFlyStateTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract> &data,
+  void ResidualFlyState1Tpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract> &data,
                                          const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &u)
   {
     if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
@@ -59,13 +59,13 @@ namespace crocoddyl
     }
     // state_->diff1(xref_, x, data->r); //diff1
     data->r.setZero();
-    data->r.head(1) = x.tail(6).head(1) - xref_.tail(6).head(1);
-    data->r.tail(1) = x.tail(2).head(1) - xref_.tail(2).head(1);
+    data->r.head(1) = x.head(state_->get_nq()-1).tail(1);
+    data->r.tail(1) = x.head(state_->get_nq()).tail(1);
     //xref_ = data->r;
   }
 
   template <typename Scalar>
-  void ResidualFlyStateTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract> &data,
+  void ResidualFlyState1Tpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract> &data,
                                              const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &u)
   {
     if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
@@ -76,24 +76,24 @@ namespace crocoddyl
     // state_->Jdiff1(xref_, x, data->Rx, data->Rx, second);//diff1
 
     data->Rx.setZero();
-    data->Rx.bottomRightCorner(2, 6).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
-    data->Rx.bottomRightCorner(2, 2).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+    data->Rx.bottomLeftCorner(2, state_->get_nq()-1).topRightCorner(1, 1).diagonal().array() = (Scalar)1;
+    data->Rx.bottomLeftCorner(2, state_->get_nq()).bottomRightCorner(1, 1).diagonal().array() = (Scalar)1;
   }
 
   template <typename Scalar>
-  void ResidualFlyStateTpl<Scalar>::print(std::ostream &os) const
+  void ResidualFlyState1Tpl<Scalar>::print(std::ostream &os) const
   {
     os << "ResidualFlyState";
   }
 
   template <typename Scalar>
-  const typename MathBaseTpl<Scalar>::VectorXs &ResidualFlyStateTpl<Scalar>::get_reference() const
+  const typename MathBaseTpl<Scalar>::VectorXs &ResidualFlyState1Tpl<Scalar>::get_reference() const
   {
     return xref_;
   }
 
   template <typename Scalar>
-  void ResidualFlyStateTpl<Scalar>::set_reference(const VectorXs &reference)
+  void ResidualFlyState1Tpl<Scalar>::set_reference(const VectorXs &reference)
   {
     xref_ = reference;
   }
