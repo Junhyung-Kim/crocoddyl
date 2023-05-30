@@ -15,7 +15,7 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
                                                            const std::size_t nr, const std::size_t nu,
                                                            const bool q_dependent, const bool v_dependent, 
                                                            const bool x_dependent, 
-                                                           const bool u_dependent, const bool zmp_dependent)
+                                                           const bool u_dependent, const bool zmp_dependent, const bool state1)
     : state_(state),
       nr_(nr),
       nu_(nu),
@@ -24,7 +24,8 @@ ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<Sta
       v_dependent_(v_dependent),
       x_dependent_(x_dependent),
       u_dependent_(u_dependent),
-      zmp_dependent_(zmp_dependent) {}
+      zmp_dependent_(zmp_dependent),
+      state1_dependent_(state1) {}
 
 template <typename Scalar>
 ResidualModelAbstractTpl<Scalar>::ResidualModelAbstractTpl(boost::shared_ptr<StateAbstract> state,
@@ -108,6 +109,11 @@ bool ResidualModelAbstractTpl<Scalar>::get_u_dependent() const {
 template <typename Scalar>
 bool ResidualModelAbstractTpl<Scalar>::get_zmp_dependent() const {
   return zmp_dependent_;
+}
+
+template <typename Scalar>
+bool ResidualModelAbstractTpl<Scalar>::get_state1_dependent() const {
+  return state1_dependent_;
 }
 
 template <typename Scalar>

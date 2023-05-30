@@ -22,7 +22,7 @@ SolverFDDP::~SolverFDDP() {}
 
 bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::vector<Eigen::VectorXd>& init_us,
                        const std::size_t maxiter, const bool is_feasible, const double reginit) {
-  START_PROFILER("SolverFDDP::solve");
+  //START_PROFILER("SolverFDDP::solve");
   if (problem_->is_updated()) {
     resizeData();
   }
@@ -92,7 +92,7 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
     if (steplength_ <= th_stepinc_) {
       increaseRegularization();
       if (xreg_ == reg_max_) {
-        STOP_PROFILER("SolverFDDP::solve");
+        //STOP_PROFILER("SolverFDDP::solve");
         return false;
       }
     }
@@ -105,11 +105,11 @@ bool SolverFDDP::solve(const std::vector<Eigen::VectorXd>& init_xs, const std::v
     }
 
     if (was_feasible_ && stop_ < th_stop_) {
-      STOP_PROFILER("SolverFDDP::solve");
+      //STOP_PROFILER("SolverFDDP::solve");
       return true;
     }
   }
-  STOP_PROFILER("SolverFDDP::solve");
+  //STOP_PROFILER("SolverFDDP::solve");
   return false;
 }
 
@@ -166,7 +166,7 @@ void SolverFDDP::forwardPass(const double steplength) {
     throw_pretty("Invalid argument: "
                  << "invalid step length, value is between 0. to 1.");
   }
-  START_PROFILER("SolverFDDP::forwardPass");
+  //START_PROFILER("SolverFDDP::forwardPass");
   cost_try_ = 0.;
   xnext_ = problem_->get_x0();
   const std::size_t T = problem_->get_T();
@@ -191,11 +191,11 @@ void SolverFDDP::forwardPass(const double steplength) {
       cost_try_ += d->cost;
 
       if (raiseIfNaN(cost_try_)) {
-        STOP_PROFILER("SolverFDDP::forwardPass");
+        //STOP_PROFILER("SolverFDDP::forwardPass");
         throw_pretty("forward_error");
       }
       if (raiseIfNaN(xnext_.lpNorm<Eigen::Infinity>())) {
-        STOP_PROFILER("SolverFDDP::forwardPass");
+        //STOP_PROFILER("SolverFDDP::forwardPass");
         throw_pretty("forward_error");
       }
     }
@@ -207,7 +207,7 @@ void SolverFDDP::forwardPass(const double steplength) {
     cost_try_ += d->cost;
 
     if (raiseIfNaN(cost_try_)) {
-      STOP_PROFILER("SolverFDDP::forwardPass");
+      //STOP_PROFILER("SolverFDDP::forwardPass");
       throw_pretty("forward_error");
     }
   } else {
@@ -230,11 +230,11 @@ void SolverFDDP::forwardPass(const double steplength) {
       cost_try_ += d->cost;
 
       if (raiseIfNaN(cost_try_)) {
-        STOP_PROFILER("SolverFDDP::forwardPass");
+        //STOP_PROFILER("SolverFDDP::forwardPass");
         throw_pretty("forward_error");
       }
       if (raiseIfNaN(xnext_.lpNorm<Eigen::Infinity>())) {
-        STOP_PROFILER("SolverFDDP::forwardPass");
+        //STOP_PROFILER("SolverFDDP::forwardPass");
         throw_pretty("forward_error");
       }
     }
@@ -246,11 +246,11 @@ void SolverFDDP::forwardPass(const double steplength) {
     cost_try_ += d->cost;
 
     if (raiseIfNaN(cost_try_)) {
-      STOP_PROFILER("SolverFDDP::forwardPass");
+      //STOP_PROFILER("SolverFDDP::forwardPass");
       throw_pretty("forward_error");
     }
   }
-  STOP_PROFILER("SolverFDDP::forwardPass");
+  //STOP_PROFILER("SolverFDDP::forwardPass");
 }
 
 double SolverFDDP::get_th_acceptnegstep() const { return th_acceptnegstep_; }

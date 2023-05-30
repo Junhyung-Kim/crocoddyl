@@ -40,6 +40,7 @@ namespace crocoddyl
                                                    const Eigen::Ref<const VectorXs> &)
   {
     Data *d = static_cast<Data *>(data.get());
+    //pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
     // Compute the frame placement w.r.t. the reference frame
     d->rMf = oMf_inv_ * d->pinocchio->oMf[id_];
     data->r = pinocchio::log6(d->rMf).toVector();
@@ -49,11 +50,12 @@ namespace crocoddyl
     /*pref_.translation()(0) =  x(0);
     pref_.translation()(1) =  x(1);
     pref_.translation()(2) =  x(2);
-   */ pref_.rotation().setZero();
+    pref_.rotation().setZero();
     pref_.translation() = data->r.head(3);
     pref_.rotation()(0,0) = data->r(3);
     pref_.rotation()(1,1) = data->r(4);
     pref_.rotation()(2,2) = data->r(5);
+  */
   }
 
   template <typename Scalar>

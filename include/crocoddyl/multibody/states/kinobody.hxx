@@ -92,7 +92,7 @@ namespace crocoddyl
                    << "dxout has wrong dimension (it should be " + std::to_string(ndx_) + ")");
     }
     pinocchio::difference(*pinocchio_.get(), x0.head(nq_), x1.head(nq_), dxout.head(nv_));
-    dxout.segment(nq_, nv_) = x1.segment(nq_, nv_) - x0.segment(nq_, nv_);
+    dxout.segment(nv_, nv_) = x1.segment(nq_, nv_) - x0.segment(nq_, nv_);
     dxout.tail(8) = x1.tail(8) - x0.tail(8);
   }
 
@@ -133,7 +133,7 @@ namespace crocoddyl
                    << "x has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
     pinocchio::integrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), xout.head(nq_));
-    xout.segment(nq_, nv_) = x.segment(nq_, nv_) + dx.segment(nq_ - 1, nv_);
+    xout.segment(nq_, nv_) = x.segment(nq_, nv_) + dx.segment(nv_, nv_);
     xout.tail(8) = x.tail(8) + dx.tail(8);
   }
 

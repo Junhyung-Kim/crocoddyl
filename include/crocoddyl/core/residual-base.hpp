@@ -60,7 +60,7 @@ class ResidualModelAbstractTpl {
 
   ResidualModelAbstractTpl(boost::shared_ptr<StateAbstract> state, const std::size_t nr, const std::size_t nu,
                            const bool q_dependent = true, const bool v_dependent = true, const bool x_dependent = true,
-                           const bool u_dependent = true, const bool zmp_dependent = false);
+                           const bool u_dependent = true, const bool zmp_dependent = false, const bool state1 = false);
 
   /**
    * @copybrief ResidualModelAbstractTpl()
@@ -166,6 +166,8 @@ class ResidualModelAbstractTpl {
   bool get_x_dependent() const;
 
   bool get_zmp_dependent() const;
+  
+  bool get_state1_dependent() const;
 
   /**
    * @brief Print information on the residual model
@@ -189,7 +191,8 @@ class ResidualModelAbstractTpl {
   bool v_dependent_;                        //!< Label that indicates if the residual function depends on v
   bool x_dependent_;                        //!< Label that indicates if the residual function depends on v
   bool u_dependent_;                        //!< Label that indicates if the residual function depends on u
-  bool zmp_dependent_;                        //!< Label that indicates if the residual function depends on q
+  bool zmp_dependent_; 
+  bool state1_dependent_;                        //!< Label that indicates if the residual function depends on q
 };
 
 template <typename _Scalar>

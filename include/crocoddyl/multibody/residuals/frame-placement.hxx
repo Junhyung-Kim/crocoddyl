@@ -40,16 +40,17 @@ void ResidualModelFramePlacementTpl<Scalar>::calc(const boost::shared_ptr<Residu
   Data* d = static_cast<Data*>(data.get());
 
   // Compute the frame placement w.r.t. the reference frame
-  pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
+  //pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
   d->rMf = oMf_inv_ * d->pinocchio->oMf[id_];
   data->r = pinocchio::log6(d->rMf).toVector();
-  pref_.translation()(0) = data->r(0);
+ /* pref_.translation()(0) = data->r(0);
   pref_.translation()(1) = data->r(1);
   pref_.translation()(2) = data->r(2);
 
   pref_.rotation()(0,0) = data->r(3);
   pref_.rotation()(1,1) = data->r(4);
   pref_.rotation()(2,2) = data->r(5);
+  */
 }
 
 template <typename Scalar>

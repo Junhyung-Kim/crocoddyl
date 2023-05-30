@@ -47,8 +47,8 @@ namespace crocoddyl
     pinocchio::computeCentroidalMomentum(*pin_model_.get(), *d->pinocchio, q, v);  
     data->r(0) = d->pinocchio->hg.toVector()(3) - x_state(7);
     data->r(1) = d->pinocchio->hg.toVector()(4) - x_state(3);
-    href_(0) = data->r(0);
-    href_(1) = data->r(1);
+    //href_(0) = data->r(0);
+    //href_(1) = data->r(1);
   }
 
   template <typename Scalar>
@@ -58,9 +58,9 @@ namespace crocoddyl
   {
     Data *d = static_cast<Data *>(data.get());
     const std::size_t &nv = state_->get_nv();
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
+    //const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
+    //const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
+    //const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
     //pinocchio::computeRNEADerivatives(*pin_model_.get(), *d->pinocchio, q, v, a);
     pinocchio::getCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio, d->dh_dq, d->dhd_dq, d->dhd_dv, d->dhd_da);
     //pinocchio::computeCentroidalMap(*pin_model_.get(), *d->pinocchio, q);

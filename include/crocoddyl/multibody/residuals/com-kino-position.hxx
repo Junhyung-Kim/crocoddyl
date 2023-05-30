@@ -44,7 +44,7 @@ namespace crocoddyl
                                                          const Eigen::Ref<const VectorXs> &u)
   {
     Data *d = static_cast<Data *>(data.get());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
+    //const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
 
     // Compute the derivatives of the frame placement
     const std::size_t nv = state_->get_nv();

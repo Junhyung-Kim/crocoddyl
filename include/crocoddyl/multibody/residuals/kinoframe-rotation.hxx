@@ -39,12 +39,12 @@ void ResidualKinoFrameRotationTpl<Scalar>::calc(const boost::shared_ptr<Residual
                                                  const Eigen::Ref<const VectorXs>&,
                                                  const Eigen::Ref<const VectorXs>&) {
   Data* d = static_cast<Data*>(data.get());
-
+  pinocchio::updateFramePlacement(*pin_model_.get(), *d->pinocchio, id_);
   d->rRf.noalias() = oRf_inv_ * d->pinocchio->oMf[id_].rotation();
-  data->r = pinocchio::log3(d->rRf);
-  Rref_(0,0) = data->r(0);
-  Rref_(1,1) = data->r(1);
-  Rref_(2,2) = data->r(2);
+  //data->r = pinocchio::log3(d->rRf);
+ // Rref_(0,0) = data->r(0);
+ // Rref_(1,1) = data->r(1);
+ // Rref_(2,2) = data->r(2);
 }
 
 template <typename Scalar>

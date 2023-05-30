@@ -10,6 +10,7 @@
 #include <omp.h>
 #include "crocoddyl/core/solvers/box-fddp.hpp"
 #include "crocoddyl/core/utils/exception.hpp"
+#include <time.h>
 
 namespace crocoddyl {
 
@@ -32,7 +33,7 @@ SolverBoxFDDP::SolverBoxFDDP(boost::shared_ptr<ShootingProblem> problem)
 SolverBoxFDDP::~SolverBoxFDDP() {}
 
 void SolverBoxFDDP::resizeData() {
-  START_PROFILER("SolverBoxFDDP::resizeData");
+  //START_PROFILER("SolverBoxFDDP::resizeData");
   SolverFDDP::resizeData();
 
   const std::size_t T = problem_->get_T();
@@ -44,7 +45,7 @@ void SolverBoxFDDP::resizeData() {
     du_lb_[t].conservativeResize(nu);
     du_ub_[t].conservativeResize(nu);
   }
-  STOP_PROFILER("SolverBoxFDDP::resizeData");
+  //STOP_PROFILER("SolverBoxFDDP::resizeData");
 }
 
 void SolverBoxFDDP::allocateData() {
@@ -106,6 +107,8 @@ void SolverBoxFDDP::forwardPass(const double steplength) {
   const std::size_t T = problem_->get_T();
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
+  //clock_t start, end;
+  //start = clock();
   if ((is_feasible_) || (steplength == 1)) {
     //#pragma omp parallel for num_threads(4)
     for (std::size_t t = 0; t < T; ++t) {
@@ -186,6 +189,9 @@ void SolverBoxFDDP::forwardPass(const double steplength) {
       throw_pretty("forward_error");
     }
   }
+  //end = clock();
+  //double result = (double)(end-start);
+  //std::cout << "forward time "<< result << std::endl;
 }
 
 const std::vector<Eigen::MatrixXd>& SolverBoxFDDP::get_Quu_inv() const { return Quu_inv_; }

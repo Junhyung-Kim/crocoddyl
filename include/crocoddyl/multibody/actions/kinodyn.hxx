@@ -42,9 +42,14 @@ namespace crocoddyl
     temp.setZero();
     temp.head(nu_) = pinocchio_.effortLimit.head(nu_);
 
-    for (int i =0; i < nu_; i++)
+    for (int i =0; i < nu_ - 2; i++)
     {
-      temp(i) = 10.0;
+      temp(i) = 30.0;
+    }
+
+    for (int i =nu_ - 2; i < nu_; i++)
+    {
+      temp(i) = 2.0;
     }
 
     temp(nu_) = 30.0;
@@ -88,7 +93,7 @@ namespace crocoddyl
     pinocchio::forwardKinematics(pinocchio_, d->pinocchio, q);
     pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);
     pinocchio::updateFramePlacements(pinocchio_, d->pinocchio);
-    pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
+    //pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
     
     d->xout2 << x_state[1], 12.3526*(x_state[0] - x_state[2]) - d->multibody.actuation->u_x[1]/ 95.941282,  d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 12.3526*(x_state[4] - x_state[6]) + d->multibody.actuation->u_x[3]/ 95.941282, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3];
     //d->xout2 << x_state[1], 12.3526 * x_state[0] - 12.3526 * x_state[2]/*-d->pinocchio.dhg.toVector()(4)/ 95.941282*/, c, /*d->pinocchio.dhg.toVector()(4)*/, x_state[5], 12.3526 * x_state[4] - 12.3526 * x_state[6] /*+ d->pinocchio.dhg.toVector()(3)/ 95.941282*/, d->multibody.actuation->u_x[1], /*d->pinocchio.dhg.toVector()(3)*/; 
@@ -140,67 +145,17 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
     
     Data *d = static_cast<Data *>(data.get());
-    typedef typename MathBase::Matrix6xs Matrix6xs;
-    Matrix6xs dhd_dq;                      //!< Jacobian of the centroidal momentum
-    Matrix6xs dhd_dv;                      //!< Jacobian of the centroidal momentum
-    Matrix6xs dh_dq;                       //!< Jacobian of the centroidal momentum
-    Matrix6xs dhd_da;                      //!< Jacobian of the centroidal momentum
-    dhd_dq.resize(6, nv);
-    dhd_dv.resize(6, nv);
-    dhd_da.resize(6, nv);
-    dh_dq.resize(6, nv);
     actuation_->calcDiff(d->multibody.actuation, x, u);
     pinocchio::computeJointJacobians(pinocchio_, d->pinocchio, q);
     pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
     pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v, d->xout);
-    /*std::cout << "d->xout "<< std::endl;
-    std::cout << d->xout.transpose() << std::endl;
-    std::cout << a.transpose() << std::endl;*/
+
     d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0;
     d->Fx.bottomRightCorner(4, 4).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0;
     d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0/ 95.941282, 1.0, 0.0, 0.0, 1.0;
     d->Fu.bottomRightCorner(8, 4).bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0/ 95.941282, 1.0, 0.0, 0.0, 1.0;
     d->Fu.topLeftCorner(nu_, nu_).setIdentity();
-  /*
-    d->Fx.bottomLeftCorner(8,nv).topLeftCorner(4,nv).bottomLeftCorner(1,nv) = dh_dq.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,nv) = dh_dq.block(3, 0, 1, nv);
-    d->Fx.bottomLeftCorner(8,2*nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_da.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,2*nv).bottomRightCorner(1,nv) = dhd_da.block(3, 0, 1, nv);
-  */
-   // d->Fu.bottomLeftCorner(8,nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_da.block(4, 0, 1, nv);
-   // d->Fu.bottomLeftCorner(1,nv).bottomRightCorner(1,nv) = dhd_da.block(3, 0, 1, nv);
   
-  /*
-    d->Fx.bottomLeftCorner(8,nv).topLeftCorner(4,nv).bottomLeftCorner(1,nv) = dhd_dq.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,nv) = dhd_dq.block(3, 0, 1, nv);
-    d->Fx.bottomLeftCorner(8,2*nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_dv.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,2*nv).bottomRightCorner(1,nv) = dhd_dv.block(3, 0, 1, nv);
-    d->Fu.bottomLeftCorner(8,nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_da.block(4, 0, 1, nv);
-    d->Fu.bottomLeftCorner(1,nv).bottomRightCorner(1,nv) = dhd_da.block(3, 0, 1, nv);
-    
-  
-    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526, 0.0, -12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-    d->Fx.bottomRightCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526, 0.0, -12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0;
-
-    d->Fx.bottomLeftCorner(8,nv).topLeftCorner(2,nv).bottomLeftCorner(1,nv) = -dhd_dq.block(4, 0, 1, nv)/ 95.941282;
-    d->Fx.bottomLeftCorner(3,nv).topLeftCorner(1,nv) = dhd_dq.block(3, 0, 1, nv)/ 95.941282;
-    d->Fx.bottomLeftCorner(8,2*nv).topRightCorner(2,nv).bottomLeftCorner(1,nv) = -dhd_dv.block(4, 0, 1, nv)/ 95.941282;
-    d->Fx.bottomLeftCorner(3,2*nv).topRightCorner(1,nv) = dhd_dv.block(3, 0, 1, nv)/ 95.941282;
-    d->Fu.bottomLeftCorner(8,nv).topRightCorner(2,nv).bottomLeftCorner(1,nv) = -dhd_da.block(4, 0, 1, nv)/ 95.941282;
-    d->Fu.bottomLeftCorner(3,nv).topRightCorner(1,nv) = dhd_da.block(3, 0, 1, nv)/ 95.941282;
-    
-    d->Fx.bottomLeftCorner(8,nv).topLeftCorner(4,nv).bottomLeftCorner(1,nv) = dhd_dq.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,nv) = dhd_dq.block(3, 0, 1, nv);
-    d->Fx.bottomLeftCorner(8,2*nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_dv.block(4, 0, 1, nv);
-    d->Fx.bottomLeftCorner(1,2*nv).bottomRightCorner(1,nv) = dhd_dv.block(3, 0, 1, nv);
-    d->Fu.bottomLeftCorner(8,nv).topRightCorner(4,nv).bottomLeftCorner(1,nv) = dhd_da.block(4, 0, 1, nv);
-    d->Fu.bottomLeftCorner(1,nv).bottomRightCorner(1,nv) = dhd_da.block(3, 0, 1, nv);
-    
-    d->Fu.topLeftCorner(nu_, nu_).setIdentity();
-  
-    d->Fu.bottomRightCorner(8, 2).topLeftCorner(4, 1) << 0.0, 0.0, 1.0, 0.0;
-    d->Fu.bottomRightCorner(4, 1) << 0.0, 0.0, 1.0, 0.0;
-    */
     costs_->calcDiff(d->costs, x, u);
   }
 
@@ -215,12 +170,10 @@ namespace crocoddyl
     }
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
-  //  const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     
     pinocchio::computeJointJacobians(pinocchio_, d->pinocchio, q);
     pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
   
-   // pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v);
     costs_->calcDiff(d->costs, x);
   }
 
