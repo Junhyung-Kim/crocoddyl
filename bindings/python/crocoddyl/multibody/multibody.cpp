@@ -37,6 +37,7 @@ void exposeMultibody() {
   exposeResidualState();
   exposeResidualFlyState();
   exposeResidualFlyState1();
+  exposeResidualFlyState2();
   exposeResidualCentroidalMomentum();
   exposeResidualCentroidalAngularMomentum();
   exposeResidualCoMPosition();

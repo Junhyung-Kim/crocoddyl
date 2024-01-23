@@ -191,6 +191,8 @@ class ResidualFlyStateTpl;
 template <typename Scalar>
 class ResidualFlyState1Tpl;
 template <typename Scalar>
+class ResidualFlyState2Tpl;
+template <typename Scalar>
 struct ResidualDataStateTpl;
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
@@ -461,6 +463,7 @@ typedef ResidualModelStateTpl<double> ResidualModelState;
 typedef ResidualDataStateTpl<double> ResidualDataState;
 typedef ResidualFlyStateTpl<double> ResidualFlyState;
 typedef ResidualFlyState1Tpl<double> ResidualFlyState1;
+typedef ResidualFlyState2Tpl<double> ResidualFlyState2;
 
 #ifdef PINOCCHIO_WITH_HPP_FCL
 typedef ResidualModelPairCollisionTpl<double> ResidualModelPairCollision;

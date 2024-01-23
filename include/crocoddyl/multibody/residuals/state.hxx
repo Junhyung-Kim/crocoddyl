@@ -14,7 +14,7 @@ namespace crocoddyl {
 template <typename Scalar>
 ResidualModelStateTpl<Scalar>::ResidualModelStateTpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                      const VectorXs& xref, const std::size_t nu)
-    : Base(state, state->get_ndx(), nu, false, false, true, false, false), xref_(xref) {
+    : Base(state, state->get_ndx(), false, false, true, false, false), xref_(xref) {
   if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 8) {
     throw_pretty("Invalid argument: "
                  << "xref has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
