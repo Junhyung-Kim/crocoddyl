@@ -82,6 +82,8 @@ namespace crocoddyl
     data->Rx.bottomRightCorner(2, 7).topLeftCorner(1, 1).diagonal().array() = (Scalar)1/3.51462;
     data->Rx.bottomRightCorner(2, 4).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
     data->Rx.bottomRightCorner(2, 3).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1/3.51462;
+    //std::cout << "data->Rx" << std::endl;
+    //std::cout << data->Rx << std::endl;
   }
 
   template <typename Scalar>
