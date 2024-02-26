@@ -152,7 +152,7 @@ namespace crocoddyl
 
     d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0;
     d->Fx.bottomRightCorner(4, 4).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0;
-    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0/ 95.941282, 1.0, 0.0, 0.0, 1.0;
+    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0/95.941282, 1.0, 0.0, 0.0, 1.0;
     d->Fu.bottomRightCorner(8, 4).bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0/ 95.941282, 1.0, 0.0, 0.0, 1.0;
     d->Fu.topLeftCorner(nu_, nu_).setIdentity();
   
