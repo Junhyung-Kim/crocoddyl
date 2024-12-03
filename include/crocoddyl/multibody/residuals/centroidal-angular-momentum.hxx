@@ -71,23 +71,6 @@ namespace crocoddyl
     //data->Rx.rightCols(5).leftCols(1)(1) = -1;
     data->Rx.leftCols(nv) = d->dh_dq.block(3, 0, 2, nv);
     data->Rx.block(0, nv, 2, nv) = d->dhd_da.block(3, 0, 2, nv);
-    //data->Rx.block(0, nv, 2, nv) = d->pinocchio->Ag.block(3, 0, 2, nv);
-  /*
-    std::cout << "aaa" << std::endl;
-    std::cout << d->dhd_dv<< std::endl;
-    std::cout << "bbb" << std::endl;
-    std::cout << d->pinocchio->dAg << std::endl;
-    std::cout << "cccc" << std::endl;
-    std::cout << d->dh_dq << std::endl;
-
-    std::cout << "dddd" << std::endl;
-    std::cout << d->dhd_da << std::endl;
-  
-    std::cout << "aaa" << std::endl;
-    std::cout << d->dhd_da<< std::endl;
-    std::cout << "bbb" << std::endl;
-    std::cout << d->pinocchio->Ag << std::endl;
-  */
   }
 
   template <typename Scalar>

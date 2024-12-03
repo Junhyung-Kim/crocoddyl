@@ -42,8 +42,9 @@ void ResidualModelCentroidalMomentumTpl<Scalar>::calcDiff(const boost::shared_pt
   Data* d = static_cast<Data*>(data.get());
   const std::size_t& nv = state_->get_nv();
   Eigen::Ref<Matrix6xs> Rq(data->Rx.leftCols(nv));
-  Eigen::Ref<Matrix6xs> Rv(data->Rx.rightCols(nv));
-  pinocchio::getCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio, Rq, d->dhd_dq, d->dhd_dv, Rv);
+  //Eigen::Ref<Matrix6xs> Rv;
+  data->Rx.rightCols(nv) = d->pinocchio->Ag;
+  pinocchio::getCentroidalDynamicsDerivatives(*pin_model_.get(), *d->pinocchio, Rq, d->dhd_dq, d->dhd_dv, d->dhd_dv);
 }
 
 template <typename Scalar>
