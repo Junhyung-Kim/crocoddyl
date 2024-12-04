@@ -201,9 +201,7 @@ double SolverDDP::calcDiff() {
 }
 
 void SolverDDP::backwardPass() {
-  clock_t start, end, start1, end1, start2, end2, start3, end3, start4, end4, start5, end5;
   //START_PROFILER("SolverDDP::backwardPass");
-  start = clock();
   const boost::shared_ptr<ActionDataAbstract>& d_T = problem_->get_terminalData();
   Vxx_.back() = d_T->Lxx;
   Vx_.back() = d_T->Lx;
@@ -218,7 +216,6 @@ void SolverDDP::backwardPass() {
 
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   const std::vector<boost::shared_ptr<ActionDataAbstract> >& datas = problem_->get_runningDatas();
-  start2 = clock();
 
   for (int t = static_cast<int>(problem_->get_T()) - 1; t >= 0; --t) {
     
@@ -255,10 +252,7 @@ void SolverDDP::backwardPass() {
         Quu_[t].diagonal().array() += ureg_;
       }
     }
-    start1 = clock();
     computeGains(t); //problem
-    end1 = clock();
-    start3 = clock();
     Vx_[t] = Qx_[t];
     Vxx_[t] = Qxx_[t];
 
@@ -288,12 +282,7 @@ void SolverDDP::backwardPass() {
     if (raiseIfNaN(Vxx_[t].lpNorm<Eigen::Infinity>())) {
       throw_pretty("backward_error");
     }
-    end3 = clock();
   }
-  end2 = clock();
-  end = clock();
-  clock_t result=(end-start);
-  clock_t result1=(end1-start1);
   //std::cout <<"back time " << (clock_t)(end2 - start2)  << std::endl;
   //std::cout << "back time " << result << "  " << result1 << " " << (clock_t)(end2-start2) << "  " << (clock_t)(end3-start3) <<std::endl;
   //STOP_PROFILER("SolverDDP::backwardPass");
@@ -350,16 +339,12 @@ void SolverDDP::forwardPass(const double steplength) {
 
 void SolverDDP::computeGains(const std::size_t t) {
   //START_PROFILER("SolverDDP::computeGains");
-  clock_t start, end, start1, end1, start2, end2;
   const std::size_t nu = problem_->get_runningModels()[t]->get_nu();
-  start = clock();
   if (nu > 0) {
     //START_PROFILER("SolverDDP::Quu_inv");
     //std::cout << "Quu_"<<std::endl;
     //std::cout << Quu_[t] << std::endl;
-    start1 = clock();
     Quu_llt_[t].compute(Quu_[t]);
-    end1 = clock();
     
     //STOP_PROFILER("SolverDDP::Quu_inv");
     const Eigen::ComputationInfo& info = Quu_llt_[t].info();
@@ -369,14 +354,10 @@ void SolverDDP::computeGains(const std::size_t t) {
     }
     K_[t] = Qxu_[t].transpose();
 
-    //START_PROFILER("SolverDDP::Quu_inv_Qux");
-    //start = clock();
-    start2 = clock();
     //Quu_llt_[t].solveInPlace(K_[t]);
     //K_[t] = Quu_llt_[t].solve(K_[t]);
     K_[t] = Quu_llt_[t].solve(K_[t]);
     //B = A.selfadjointView<Upper>.llt().solve(B);
-    end2 = clock();
     //end = clock();
     //std::cout <<"ss " << end-start << std::endl;
     //STOP_PROFILER("SolverDDP::Quu_inv_Qux");
@@ -384,7 +365,6 @@ void SolverDDP::computeGains(const std::size_t t) {
     //Quu_llt_[t].solveInPlace(k_[t]);
     k_[t] = Quu_llt_[t].solve(k_[t]);
   }
-  end = clock();
   //std::cout << "clock " << end-start << " " << end1 - start1 <<" " << end2-start2<< std::endl;
   //STOP_PROFILER("SolverDDP::computeGains");
 }
