@@ -62,13 +62,13 @@ namespace crocoddyl
     virtual void calc(const boost::shared_ptr<Data> &data, const Eigen::Ref<const VectorXs> &x,
                       const Eigen::Ref<const VectorXs> &u)
     {
-      if (static_cast<std::size_t>(u.size()) != nu_ + 4)
+      if (static_cast<std::size_t>(u.size()) != nu_ + 6)
       {
         throw_pretty("Invalid argument: "
                      << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
       }
       data->tau.segment(0, nu_) = u.head(nu_);
-      data->u_x = u.tail(4);
+      data->u_x = u.tail(6);
     };
 
       /**

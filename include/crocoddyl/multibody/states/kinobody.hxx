@@ -17,7 +17,7 @@ namespace crocoddyl
 
   template <typename Scalar>
   StateKinodynamicTpl<Scalar>::StateKinodynamicTpl(boost::shared_ptr<PinocchioModel> model)
-      : Base(model->nq + model->nv, 2 * model->nv), pinocchio_(model), x0_(VectorXs::Zero(model->nq + model->nv + 8))
+      : Base(model->nq + model->nv, 2 * model->nv), pinocchio_(model), x0_(VectorXs::Zero(model->nq + model->nv + 11))
   {
 
     const std::size_t nq0 = model->joints[1].nq();
@@ -76,12 +76,12 @@ namespace crocoddyl
     // std::cout << "diff " << x0.tail(4).transpose() << std::endl;
     // std::cout << "diffx " << x1.tail(4).transpose() << std::endl;
 
-    if (static_cast<std::size_t>(x0.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x0.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
-    if (static_cast<std::size_t>(x1.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x1.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x1 has wrong dimension (it should be " + std::to_string(nx_) + ")");
@@ -93,7 +93,7 @@ namespace crocoddyl
     }
     pinocchio::difference(*pinocchio_.get(), x0.head(nq_), x1.head(nq_), dxout.head(nv_));
     dxout.segment(nv_, nv_) = x1.segment(nq_, nv_) - x0.segment(nq_, nv_);
-    dxout.tail(8) = x1.tail(8) - x0.tail(8);
+    dxout.tail(8+3) = x1.tail(8+3) - x0.tail(8+3);
   }
 
   template <typename Scalar>
@@ -102,12 +102,12 @@ namespace crocoddyl
   {
     // std::cout << "diff " << x0.tail(4).transpose() << std::endl;
     // std::cout << "diffx " << x1.tail(4).transpose() << std::endl;
-    if (static_cast<std::size_t>(x0.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x0.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
-    if (static_cast<std::size_t>(x1.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x1.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x1 has wrong dimension (it should be " + std::to_string(nx_) + ")");
@@ -119,22 +119,22 @@ namespace crocoddyl
     }
 
     dxout.setZero();
-    dxout.head(1) = x1.tail(6).head(1) - x0.tail(6).head(1);
-    dxout.tail(1) = x1.tail(2).head(1) - x0.tail(2).head(1);
+    dxout.head(1) = x1.tail(6+3).head(1) - x0.tail(6+3).head(1);
+    dxout.tail(1) = x1.tail(2+3).head(1) - x0.tail(2+3).head(1);
   }
 
   template <typename Scalar>
   void StateKinodynamicTpl<Scalar>::integrate(const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &dx,
                                               Eigen::Ref<VectorXs> xout) const
   {
-    if (static_cast<std::size_t>(x.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
     pinocchio::integrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), xout.head(nq_));
     xout.segment(nq_, nv_) = x.segment(nq_, nv_) + dx.segment(nv_, nv_);
-    xout.tail(8) = x.tail(8) + dx.tail(8);
+    xout.tail(8+3) = x.tail(8+3) + dx.tail(8+3);
   }
 
   template <typename Scalar>
@@ -143,12 +143,12 @@ namespace crocoddyl
                                           const Jcomponent firstsecond) const
   {
     assert_pretty(is_a_Jcomponent(firstsecond), ("firstsecond must be one of the Jcomponent {both, first, second}"));
-    if (static_cast<std::size_t>(x0.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x0.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
-    if (static_cast<std::size_t>(x1.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x1.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x1 has wrong dimension (it should be " + std::to_string(nx_) + ")");
@@ -166,7 +166,7 @@ namespace crocoddyl
       pinocchio::dDifference(*pinocchio_.get(), x0.head(nq_), x1.head(nq_), Jfirst.topLeftCorner(nv_, nv_),
                              pinocchio::ARG0);
       Jfirst.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)-1;
-      Jfirst.bottomRightCorner(8, 8).diagonal().array() = (Scalar)-1;
+      Jfirst.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)-1;
     }
     else if (firstsecond == second)
     {
@@ -179,7 +179,7 @@ namespace crocoddyl
       pinocchio::dDifference(*pinocchio_.get(), x0.head(nq_), x1.head(nq_), Jsecond.topLeftCorner(nv_, nv_),
                              pinocchio::ARG1);
       Jsecond.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)1;
-      Jsecond.bottomRightCorner(8, 8).diagonal().array() = (Scalar)1;
+      Jsecond.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)1;
     }
     else
     { // computing both
@@ -201,8 +201,8 @@ namespace crocoddyl
                              pinocchio::ARG1);
       Jfirst.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)-1;
       Jsecond.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)1;
-      Jfirst.bottomRightCorner(8, 8).diagonal().array() = (Scalar)-1;
-      Jsecond.bottomRightCorner(8, 8).diagonal().array() = (Scalar)1;
+      Jfirst.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)-1;
+      Jsecond.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)1;
     }
   }
   template <typename Scalar>
@@ -211,12 +211,12 @@ namespace crocoddyl
                                            const Jcomponent firstsecond) const
   {
     assert_pretty(is_a_Jcomponent(firstsecond), ("firstsecond must be one of the Jcomponent {both, first, second}"));
-    if (static_cast<std::size_t>(x0.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x0.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
     }
-    if (static_cast<std::size_t>(x1.size()) != nx_ + 8)
+    if (static_cast<std::size_t>(x1.size()) != nx_ + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x1 has wrong dimension (it should be " + std::to_string(nx_) + ")");
@@ -234,7 +234,7 @@ namespace crocoddyl
       pinocchio::dDifference(*pinocchio_.get(), x0.head(nq_), x1.head(nq_), Jfirst.topLeftCorner(nv_, nv_),
                              pinocchio::ARG0);
       Jfirst.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)-1;
-      Jfirst.bottomRightCorner(8, 8).diagonal().array() = (Scalar)-1;
+      Jfirst.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)-1;
     }
     else if (firstsecond == second)
     {
@@ -244,8 +244,8 @@ namespace crocoddyl
       // Jsecond.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)1;
       // Jsecond.setIdentity();
       Jsecond.setZero();
-      Jsecond.bottomRightCorner(2, 6).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
-      Jsecond.bottomRightCorner(2, 2).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+      Jsecond.bottomRightCorner(2, 6+3).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+      Jsecond.bottomRightCorner(2, 2+3).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
       // Jsecond.bottomRightCorner(2,2).topLefFtCorner(1,1).diagonal().array() = (Scalar)1;
       // Jsecond.bottomRightCorner(6,6).topLeftCorner(1,1).diagonal().array() = (Scalar)1;
     }
@@ -269,8 +269,8 @@ namespace crocoddyl
                              pinocchio::ARG1);
       Jfirst.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)-1;
       Jsecond.block(nv_, nv_, nv_, nv_).diagonal().array() = (Scalar)1;
-      Jfirst.bottomRightCorner(8, 8).diagonal().array() = (Scalar)-1;
-      Jsecond.bottomRightCorner(8, 8).diagonal().array() = (Scalar)1;
+      Jfirst.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)-1;
+      Jsecond.bottomRightCorner(8+3, 8+3).diagonal().array() = (Scalar)1;
     }
   }
 
@@ -295,17 +295,17 @@ namespace crocoddyl
       case setto:
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jfirst.topLeftCorner(nv_, nv_),
                               pinocchio::ARG0, pinocchio::SETTO);
-        Jfirst.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() = (Scalar)1;
+        Jfirst.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() = (Scalar)1;
         break;
       case addto:
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jfirst.topLeftCorner(nv_, nv_),
                               pinocchio::ARG0, pinocchio::ADDTO);
-        Jfirst.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() += (Scalar)1;
+        Jfirst.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() += (Scalar)1;
         break;
       case rmfrom:
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jfirst.topLeftCorner(nv_, nv_),
                               pinocchio::ARG0, pinocchio::RMTO);
-        Jfirst.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() -= (Scalar)1;
+        Jfirst.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() -= (Scalar)1;
         break;
       default:
         throw_pretty("Invalid argument: allowed operators: setto, addto, rmfrom");
@@ -326,20 +326,20 @@ namespace crocoddyl
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jsecond.topLeftCorner(nv_, nv_),
                               pinocchio::ARG1, pinocchio::SETTO);
         Jsecond.setZero();
-        Jsecond.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() = (Scalar)1;
+        Jsecond.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() = (Scalar)1;
         break;
       case addto:
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jsecond.topLeftCorner(nv_, nv_),
                               pinocchio::ARG1, pinocchio::ADDTO);
         Jsecond.setZero();
-        Jsecond.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() += (Scalar)1;
+        Jsecond.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() += (Scalar)1;
         break;
       case rmfrom:
         pinocchio::dIntegrate(*pinocchio_.get(), x.head(nq_), dx.head(nv_), Jsecond.topLeftCorner(nv_, nv_),
                               pinocchio::ARG1, pinocchio::RMTO);
         Jsecond.setZero();
 
-        Jsecond.bottomRightCorner(nv_ + 8, nv_ + 8).diagonal().array() -= (Scalar)1;
+        Jsecond.bottomRightCorner(nv_ + 11, nv_ + 11).diagonal().array() -= (Scalar)1;
         break;
       default:
         throw_pretty("Invalid argument: allowed operators: setto, addto, rmfrom");

@@ -36,11 +36,11 @@ template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                               const Eigen::Ref<const VectorXs>& x,
                                               const Eigen::Ref<const VectorXs>& u) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
-  if (static_cast<std::size_t>(u.size()) != nu_ + 4) {
+  if (static_cast<std::size_t>(u.size()) != nu_ + 6) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -99,7 +99,7 @@ void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionData
 template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calc(const boost::shared_ptr<ActionDataAbstract>& data,
                                               const Eigen::Ref<const VectorXs>& x) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
@@ -118,11 +118,11 @@ template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                                   const Eigen::Ref<const VectorXs>& x,
                                                   const Eigen::Ref<const VectorXs>& u) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
-  if (static_cast<std::size_t>(u.size()) != nu_ + 4) {
+  if (static_cast<std::size_t>(u.size()) != nu_ + 6) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -131,16 +131,16 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
   Data* d = static_cast<Data*>(data.get());
   //assert_pretty(MatrixXs(d->dyi_dx[0]).isApprox(MatrixXs::Identity(state_->get_ndx(), state_->get_ndx())),
               //  "you have changed dyi_dx[0] values that supposed to be constant.");
-  //assert_pretty((MatrixXs(d->dki_dx[0]).topRightCorner(nv+ 8, nv+ 8)).topLeftCorner(nv, nv).isApprox(MatrixXs::Identity(nv, nv)),
+  //assert_pretty((MatrixXs(d->dki_dx[0]).topRightCorner(nv + 11, nv + 11)).topLeftCorner(nv, nv).isApprox(MatrixXs::Identity(nv, nv)),
   //              "you have changed dki_dx[0] values that supposed to be constant.");//revise
   for (std::size_t i = 0; i < ni_; ++i) {
     differential_->calcDiff(d->differential[i], d->y[i], d->ws[i]);
   }
   const boost::shared_ptr<DifferentialActionDataAbstract>& k0_data = d->differential[0];
   const boost::shared_ptr<ControlParametrizationDataAbstract>& u0_data = d->control[0];
-  d->dki_dx[0].bottomRows(nv+ 8) = k0_data->Fx;
+  d->dki_dx[0].bottomRows(nv + 11) = k0_data->Fx;
   control_->multiplyByJacobian(u0_data, k0_data->Fu,
-                               d->dki_du[0].bottomRows(nv+ 8));  // dki_du = dki_dw * dw_du
+                               d->dki_du[0].bottomRows(nv + 11));  // dki_du = dki_dw * dw_du
   d->dli_dx[0] = k0_data->Lx;
   control_->multiplyJacobianTransposeBy(u0_data, k0_data->Lu,
                                         d->dli_du[0]);  // dli_du = dli_dw * dw_du
@@ -162,18 +162,18 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
     state_->Jintegrate(x, d->dx_rk[i], d->dyi_dx[i].topLeftCorner(state_->get_ndx(),state_->get_ndx()), d->dyi_dx[i], first, addto);
     state_->JintegrateTransport(x, d->dx_rk[i], d->dyi_du[i], second);  // dyi_du = Jintegrate * dyi_du
     // Sparse matrix-matrix multiplication for computing:
-    Eigen::Block<MatrixXs> dkvi_dq = d->dki_dx[i].bottomLeftCorner(nv+ 8, nv+ 8);
-    Eigen::Block<MatrixXs> dkvi_dv = d->dki_dx[i].bottomRightCorner(nv+ 8, nv+ 8);
-    Eigen::Block<MatrixXs> dkqi_du = d->dki_du[i].topLeftCorner(nv+ 8, nu+ 4);
-    Eigen::Block<MatrixXs> dkvi_du = d->dki_du[i].bottomLeftCorner(nv+ 8, nu+ 4);
-    const Eigen::Block<MatrixXs> dki_dqi = ki_data->Fx.bottomLeftCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dki_dvi = ki_data->Fx.bottomRightCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dqi_dq = d->dyi_dx[i].topLeftCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dqi_dv = d->dyi_dx[i].topRightCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dvi_dq = d->dyi_dx[i].bottomLeftCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dvi_dv = d->dyi_dx[i].bottomRightCorner(nv+ 8, nv+ 8);
-    const Eigen::Block<MatrixXs> dqi_du = d->dyi_du[i].topLeftCorner(nv+ 8, nu+ 4);
-    const Eigen::Block<MatrixXs> dvi_du = d->dyi_du[i].bottomLeftCorner(nv+ 8, nu+ 4);
+    Eigen::Block<MatrixXs> dkvi_dq = d->dki_dx[i].bottomLeftCorner(nv + 11, nv + 11);
+    Eigen::Block<MatrixXs> dkvi_dv = d->dki_dx[i].bottomRightCorner(nv + 11, nv + 11);
+    Eigen::Block<MatrixXs> dkqi_du = d->dki_du[i].topLeftCorner(nv + 11, nu + 6);
+    Eigen::Block<MatrixXs> dkvi_du = d->dki_du[i].bottomLeftCorner(nv + 11, nu + 6);
+    const Eigen::Block<MatrixXs> dki_dqi = ki_data->Fx.bottomLeftCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dki_dvi = ki_data->Fx.bottomRightCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dqi_dq = d->dyi_dx[i].topLeftCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dqi_dv = d->dyi_dx[i].topRightCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dvi_dq = d->dyi_dx[i].bottomLeftCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dvi_dv = d->dyi_dx[i].bottomRightCorner(nv + 11, nv + 11);
+    const Eigen::Block<MatrixXs> dqi_du = d->dyi_du[i].topLeftCorner(nv + 11, nu + 6);
+    const Eigen::Block<MatrixXs> dvi_du = d->dyi_du[i].bottomLeftCorner(nv + 11, nu + 6);
     //   i. d->dki_dx[i].noalias() = d->dki_dy[i] * d->dyi_dx[i], where dki_dy is ki_data.Fx
     d->dki_dx[i].topRows(nv) = d->dyi_dx[i].block(nv, 0, nv, state_->get_ndx());
     dkvi_dq.noalias() = dki_dqi * dqi_dq;
@@ -188,7 +188,7 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
     dkqi_du = dvi_du;
     dkvi_du.noalias() = dki_dqi * dqi_du;
     dkvi_du.noalias() += dki_dvi * dvi_du;
-    control_->multiplyByJacobian(ui_data, ki_data->Fu, d->dki_du[i].bottomRows(nv+ 8),
+    control_->multiplyByJacobian(ui_data, ki_data->Fu, d->dki_du[i].bottomRows(nv + 11),
                                  addto);  // dfi_du = dki_dw * dw_du
 
     d->dli_dx[i].noalias() = ki_data->Lx.transpose() * d->dyi_dx[i];
@@ -259,7 +259,7 @@ void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<Action
 template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::calcDiff(const boost::shared_ptr<ActionDataAbstract>& data,
                                                   const Eigen::Ref<const VectorXs>& x) {
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }
@@ -295,11 +295,11 @@ template <typename Scalar>
 void IntegratedActionModelRKTpl<Scalar>::quasiStatic(const boost::shared_ptr<ActionDataAbstract>& data,
                                                      Eigen::Ref<VectorXs> u, const Eigen::Ref<const VectorXs>& x,
                                                      const std::size_t maxiter, const Scalar tol) {
-  if (static_cast<std::size_t>(u.size()) != nu_ + 4) {
+  if (static_cast<std::size_t>(u.size()) != nu_ + 6) {
     throw_pretty("Invalid argument: "
                  << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
-  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8) {
+  if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11) {
     throw_pretty("Invalid argument: "
                  << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
   }

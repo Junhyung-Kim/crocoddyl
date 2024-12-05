@@ -37,7 +37,7 @@ ShootingProblemTpl<Scalar>::ShootingProblemTpl(
       nu_max_ = nu;
     }
   }
-  if (static_cast<std::size_t>(x0.size()) != nx_ + 8) {
+  if (static_cast<std::size_t>(x0.size()) != nx_ + 11) {
     throw_pretty("Invalid argument: "
                  << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
   }
@@ -93,7 +93,7 @@ ShootingProblemTpl<Scalar>::ShootingProblemTpl(
       nu_max_ = nu;
     }
   }
-  if (static_cast<std::size_t>(x0.size()) != nx_ + 8) {
+  if (static_cast<std::size_t>(x0.size()) != nx_ + 11) {
     throw_pretty("Invalid argument: "
                  << "x0 has wrong dimension (it should be " + std::to_string(nx_) + ")");
   }

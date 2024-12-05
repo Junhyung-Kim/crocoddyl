@@ -17,7 +17,7 @@ namespace crocoddyl
                                                    const VectorXs &xref, const std::size_t nu)
       : Base(state, 4, nu, false, false, false, false, true), xref_(xref)
   {
-    if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "xref has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -29,7 +29,7 @@ namespace crocoddyl
                                                    const VectorXs &xref)
       : Base(state, 4, false, false, false, false, true), xref_(xref)
   {
-    if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "xref has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -52,26 +52,25 @@ namespace crocoddyl
   void ResidualFlyStateTpl<Scalar>::calc(const boost::shared_ptr<ResidualDataAbstract> &data,
                                          const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &u)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
     // state_->diff1(xref_, x, data->r); //diff1
     data->r.setZero();
-    data->r.head(1) = x.tail(6).head(1) - xref_.tail(6).head(1);
-    data->r.tail(1) = x.tail(2).head(1) - xref_.tail(2).head(1);
+    data->r.head(1) = x.tail(6+3).head(1) - xref_.tail(6+3).head(1);
+    data->r.tail(1) = x.tail(2+3).head(1) - xref_.tail(2+3).head(1);
 
-    data->r.head(2).tail(1) = x.tail(5).head(1) - xref_.tail(5).head(1);
-    data->r.tail(2).head(1) = x.tail(1).head(1) - xref_.tail(1).head(1);
-    //xref_ = data->r;
+    data->r.head(2).tail(1) = x.tail(5+3).head(1) - xref_.tail(5+3).head(1);
+    data->r.tail(2).head(1) = x.tail(1+3).head(1) - xref_.tail(1+3).head(1);
   }
 
   template <typename Scalar>
   void ResidualFlyStateTpl<Scalar>::calcDiff(const boost::shared_ptr<ResidualDataAbstract> &data,
                                              const Eigen::Ref<const VectorXs> &x, const Eigen::Ref<const VectorXs> &u)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -79,11 +78,11 @@ namespace crocoddyl
     // state_->Jdiff1(xref_, x, data->Rx, data->Rx, second);//diff1
 
     data->Rx.setZero();
-    data->Rx.bottomRightCorner(4, 6).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
-    data->Rx.bottomRightCorner(2, 2).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+    data->Rx.bottomRightCorner(4, 6+3).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+    data->Rx.bottomRightCorner(2, 2+3).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)1;
   
-    data->Rx.bottomRightCorner(3, 5).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
-    data->Rx.bottomRightCorner(2, 2).topRightCorner(1, 1).diagonal().array() = (Scalar)1;  
+    data->Rx.bottomRightCorner(3, 5+3).topLeftCorner(1, 1).diagonal().array() = (Scalar)1;
+    data->Rx.bottomRightCorner(2, 2+3).topRightCorner(1, 1).diagonal().array() = (Scalar)1;  
   }
 
   template <typename Scalar>

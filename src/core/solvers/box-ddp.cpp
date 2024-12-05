@@ -39,7 +39,7 @@ void SolverBoxDDP::resizeData() {
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& model = models[t];
-    const std::size_t nu = model->get_nu() + 4;
+    const std::size_t nu = model->get_nu() + 6;
     Quu_inv_[t].conservativeResize(nu, nu);
     du_lb_[t].conservativeResize(nu);
     du_ub_[t].conservativeResize(nu);
@@ -57,7 +57,7 @@ void SolverBoxDDP::allocateData() {
   const std::vector<boost::shared_ptr<ActionModelAbstract> >& models = problem_->get_runningModels();
   for (std::size_t t = 0; t < T; ++t) {
     const boost::shared_ptr<ActionModelAbstract>& model = models[t];
-    const std::size_t nu = model->get_nu() + 4;
+    const std::size_t nu = model->get_nu() + 6;
     Quu_inv_[t] = Eigen::MatrixXd::Zero(nu, nu);
     du_lb_[t] = Eigen::VectorXd::Zero(nu);
     du_ub_[t] = Eigen::VectorXd::Zero(nu);

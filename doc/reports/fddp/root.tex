@@ -427,9 +427,9 @@ Then, we get:
 
 The second-order term is:
 \begin{align*}
-  \Delta_2 &= f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 + f_1^T V_{xx1} f_1 + 4(f_0^T F_0^T L_{xx1} f_1 + k_0^T F_{u0} L_{xx1} f_1) \\
-  &= f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 + f_1^T V_{xx1} f_1 + 4\big(f_1^T V_{xx1} (x_1-f_1) \big) \\
-  &= -f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 - f_1^T V_{xx1} f_1 + 4\big(f_0^T V_{xx0} x_0 + f_1^T V_{xx1} x_1 \big)
+  \Delta_2 &= f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 + f_1^T V_{xx1} f_1 + 6(f_0^T F_0^T L_{xx1} f_1 + k_0^T F_{u0} L_{xx1} f_1) \\
+  &= f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 + f_1^T V_{xx1} f_1 + 6\big(f_1^T V_{xx1} (x_1-f_1) \big) \\
+  &= -f_0^T V_{xx0} f_0 + k_0^T Q_{uu0} k_0 - f_1^T V_{xx1} f_1 + 6\big(f_0^T V_{xx0} x_0 + f_1^T V_{xx1} x_1 \big)
 \end{align*}
 We can recognize in the additional terms (the 2 last ones) the same terms as in $\Delta_1$.
 Nicely, they will cancel out in the case we make a full step $\alpha=1$:

@@ -32,13 +32,13 @@ namespace crocoddyl
         without_armature_(true),
         armature_(VectorXs::Zero(state->get_nv()))
   {
-    if (costs_->get_nu() != nu_ + 4)
+    if (costs_->get_nu() != nu_ + 6)
     {
       throw_pretty("Invalid argument: "
                    << "Costs doesn't have the same control dimension (it should be " + std::to_string(nu_) + ")");
     }
     VectorXs temp;
-    temp.resize(actuation->get_nu() + 4);
+    temp.resize(actuation->get_nu() + 6);
     temp.setZero();
     temp.head(nu_) = pinocchio_.effortLimit.head(nu_);
 
@@ -55,8 +55,11 @@ namespace crocoddyl
     temp(nu_) = 30.0;
     temp(nu_ + 1) = 30000.0;
 
-    temp(nu_ +2) = 30.0;
+    temp(nu_ + 2) = 30.0;
     temp(nu_ + 3) = 30000.0;
+
+    temp(nu_  + 6) = 30.0;
+    temp(nu_ + 5) = 30.0;
     Base::set_u_lb(Scalar(-1.) * temp);
     Base::set_u_ub(Scalar(+1.) * temp);
   }
@@ -69,12 +72,12 @@ namespace crocoddyl
       const boost::shared_ptr<DifferentialActionDataAbstract> &data, const Eigen::Ref<const VectorXs> &x,
       const Eigen::Ref<const VectorXs> &u)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
-    if (static_cast<std::size_t>(u.size()) != nu_ + 4)
+    if (static_cast<std::size_t>(u.size()) != nu_ + 6)
     {
       throw_pretty("Invalid argument: "
                    << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
@@ -83,7 +86,7 @@ namespace crocoddyl
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
     
     actuation_->calc(d->multibody.actuation, x, u);
@@ -95,8 +98,8 @@ namespace crocoddyl
     pinocchio::updateFramePlacements(pinocchio_, d->pinocchio);
     //pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
     
-    d->xout2 << x_state[1], 12.3526*(x_state[0] - x_state[2]) - d->multibody.actuation->u_x[1]/ 95.941282,  d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 12.3526*(x_state[4] - x_state[6]) + d->multibody.actuation->u_x[3]/ 95.941282, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3];
-    //d->xout2 << x_state[1], 12.3526 * x_state[0] - 12.3526 * x_state[2]/*-d->pinocchio.dhg.toVector()(4)/ 95.941282*/, c, /*d->pinocchio.dhg.toVector()(4)*/, x_state[5], 12.3526 * x_state[4] - 12.3526 * x_state[6] /*+ d->pinocchio.dhg.toVector()(3)/ 95.941282*/, d->multibody.actuation->u_x[1], /*d->pinocchio.dhg.toVector()(3)*/; 
+    d->xout2 << x_state[1], (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))), u[state_->get_nv()+0], u[state_->get_nv()+1], x_state[5], (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[4]-x_state[6]+u[state_->get_nv()+2]/(100*(9.81+u[state_->get_nv()+4]))), u[state_->get_nv()+2], u[state_->get_nv()+2], x_state[9], u[state_->get_nv()+4], u[state_->get_nv()+5];
+    //d->xout2 << x_state[1], 12.3526*(x_state[0] - x_state[2]) - d->multibody.actuation->u_x[1]/ 95.941282,  d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 12.3526*(x_state[4] - x_state[6]) + d->multibody.actuation->u_x[3]/ 95.941282, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3], 0, 0, 0;
     costs_->calc(d->costs, x, u);
     d->cost = d->costs->cost;
   }
@@ -105,7 +108,7 @@ namespace crocoddyl
   void DifferentialActionModelKinoDynamicsTpl<Scalar>::calc(
       const boost::shared_ptr<DifferentialActionDataAbstract> &data, const Eigen::Ref<const VectorXs> &x)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -128,12 +131,12 @@ namespace crocoddyl
       const boost::shared_ptr<DifferentialActionDataAbstract> &data, const Eigen::Ref<const VectorXs> &x,
       const Eigen::Ref<const VectorXs> &u)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
     }
-    if (static_cast<std::size_t>(u.size()) != nu_ + 4)
+    if (static_cast<std::size_t>(u.size()) != nu_ + 6)
     {
       throw_pretty("Invalid argument: "
                    << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
@@ -143,6 +146,7 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> a = u.head(state_->get_nv());
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     
     Data *d = static_cast<Data *>(data.get());
     actuation_->calcDiff(d->multibody.actuation, x, u);
@@ -150,12 +154,35 @@ namespace crocoddyl
     pinocchio::jacobianCenterOfMass(pinocchio_, d->pinocchio, q, false);
     pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v, d->xout);
 
-    d->Fx.bottomRightCorner(8, 8).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0;
-    d->Fx.bottomRightCorner(4, 4).topLeftCorner(4, 4) << 0.0, 1.0, 0.0, 0.0, 12.3526,0.0,-12.3526, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,0.0,0.0,0.0,0.0;
-    d->Fu.bottomRightCorner(8, 4).topLeftCorner(4, 2) << 0.0, 0.0, 0.0, -1.0/95.941282, 1.0, 0.0, 0.0, 1.0;
-    d->Fu.bottomRightCorner(8, 4).bottomRightCorner(4, 2) << 0.0, 0.0, 0.0, 1.0/ 95.941282, 1.0, 0.0, 0.0, 1.0;
-    d->Fu.topLeftCorner(nu_, nu_).setIdentity();
-  
+    d->Fu.topLeftCorner(nu_,nu_).setIdentity();
+    
+    double nqnv = state_->get_nv() + state_->get_nv();
+    d->Fx(state_->get_nv()+0,nqnv+1) = 1.0;
+    d->Fx(state_->get_nv()+1,nqnv+0) = (1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8] - x_state[10]);
+    d->Fx(state_->get_nv()+1,nqnv+2) = -(1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8]- x_state[10]);
+    d->Fx(state_->get_nv()+1,nqnv+8) = (1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[2] - x_state[0] + u[state_->get_nv()+1]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
+    d->Fx(state_->get_nv()+1,nqnv+10) = -(1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[2] - x_state[0] + u[state_->get_nv()+1]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
+    d->Fu(state_->get_nv()+1,state_->get_nv()+1) = -1.0/(100*(x_state[8] - x_state[10]));
+    d->Fu(state_->get_nv()+1,state_->get_nv()+4) = (1.0*(x_state[0] - x_state[2]))/(x_state[8]- x_state[10]);
+
+    d->Fu(state_->get_nv()+2,state_->get_nv()+0) = 1.0;
+    d->Fu(state_->get_nv()+3,state_->get_nv()+1) = 1.0;
+    
+    d->Fx(state_->get_nv()+4,nqnv+5) = 1.0;
+    d->Fx(state_->get_nv()+5,nqnv+4) = (1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8] - x_state[10]);
+    d->Fx(state_->get_nv()+5,nqnv+6) = -(1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8]- x_state[10]);
+    d->Fx(state_->get_nv()+5,nqnv+8) = -(1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[4] - x_state[6] + u[state_->get_nv()+3]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
+    d->Fx(state_->get_nv()+5,nqnv+10) = (1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[4] - x_state[6] + u[state_->get_nv()+3]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
+    d->Fu(state_->get_nv()+5,state_->get_nv()+3) = 1.0/(100*(x_state[8] - x_state[10]));
+    d->Fu(state_->get_nv()+5,state_->get_nv()+4) = (1.0*(x_state[4] - x_state[6]))/(x_state[8]- x_state[10]);
+
+    d->Fu(state_->get_nv()+6,state_->get_nv()+2) = 1.0;
+    d->Fu(state_->get_nv()+7,state_->get_nv()+3) = 1.0;
+
+    d->Fx(state_->get_nv()+8,nqnv+9) = 1.0;
+    d->Fu(state_->get_nv()+9,state_->get_nv()+4) = 1.0;
+    d->Fu(state_->get_nv()+10,state_->get_nv()+5) = 1.0;
+    
     costs_->calcDiff(d->costs, x, u);
   }
 
@@ -163,7 +190,7 @@ namespace crocoddyl
   void DifferentialActionModelKinoDynamicsTpl<Scalar>::calcDiff(
       const boost::shared_ptr<DifferentialActionDataAbstract> &data, const Eigen::Ref<const VectorXs> &x)
   {
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");
@@ -203,12 +230,12 @@ namespace crocoddyl
       const boost::shared_ptr<DifferentialActionDataAbstract> &data, Eigen::Ref<VectorXs> u,
       const Eigen::Ref<const VectorXs> &x, const std::size_t, const Scalar)
   {
-    if (static_cast<std::size_t>(u.size()) != nu_ + 4)
+    if (static_cast<std::size_t>(u.size()) != nu_ + 6)
     {
       throw_pretty("Invalid argument: "
                    << "u has wrong dimension (it should be " + std::to_string(nu_) + ")");
     }
-    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 8)
+    if (static_cast<std::size_t>(x.size()) != state_->get_nx() + 11)
     {
       throw_pretty("Invalid argument: "
                    << "x has wrong dimension (it should be " + std::to_string(state_->get_nx()) + ")");

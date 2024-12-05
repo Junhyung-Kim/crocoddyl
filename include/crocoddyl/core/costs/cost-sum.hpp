@@ -251,17 +251,17 @@ struct CostDataSumTpl {
   template <template <typename Scalar> class Model>
   CostDataSumTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
       : Lx_internal(model->get_state()->get_ndx()),
-        Lu_internal(model->get_nu() + 4),
+        Lu_internal(model->get_nu() + 6),
         Lxx_internal(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu_internal(model->get_state()->get_ndx(), model->get_nu()+ 4),
-        Luu_internal(model->get_nu() + 4, model->get_nu() + 4),
+        Lxu_internal(model->get_state()->get_ndx(), model->get_nu() + 6),
+        Luu_internal(model->get_nu() + 6, model->get_nu() + 6),
         shared(data),
         cost(Scalar(0.)),
         Lx(Lx_internal.data(), model->get_state()->get_ndx()),
-        Lu(Lu_internal.data(), model->get_nu()+ 4),
+        Lu(Lu_internal.data(), model->get_nu() + 6),
         Lxx(Lxx_internal.data(), model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu(Lxu_internal.data(), model->get_state()->get_ndx(), model->get_nu()+ 4),
-        Luu(Luu_internal.data(), model->get_nu()+ 4, model->get_nu()+ 4) {
+        Lxu(Lxu_internal.data(), model->get_state()->get_ndx(), model->get_nu() + 6),
+        Luu(Luu_internal.data(), model->get_nu() + 6, model->get_nu() + 6) {
     Lx.setZero();
     Lu.setZero();
     Lxx.setZero();

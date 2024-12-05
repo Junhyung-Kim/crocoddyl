@@ -175,8 +175,8 @@ struct IntegratedActionDataEulerTpl : public IntegratedActionDataAbstractTpl<_Sc
     const std::size_t ndx = model->get_state()->get_ndx();
     const std::size_t nv = model->get_state()->get_nv();
     dx = VectorXs::Zero(ndx);
-    da_du = MatrixXs::Zero(nv + 8, model->get_nu() + 4);
-    Lwu = MatrixXs::Zero(model->get_control()->get_nw() + 4, model->get_nu() + 4);
+    da_du = MatrixXs::Zero(nv + 11, model->get_nu() + 6);
+    Lwu = MatrixXs::Zero(model->get_control()->get_nw() + 6, model->get_nu() + 6);
   }
   virtual ~IntegratedActionDataEulerTpl() {}
 

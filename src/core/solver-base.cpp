@@ -118,14 +118,14 @@ void SolverAbstract::setCandidate(const std::vector<Eigen::VectorXd>& xs_warm,
     }
     for (std::size_t t = 0; t < T; ++t) {
       const std::size_t nx = models[t]->get_state()->get_nx();
-      if (static_cast<std::size_t>(xs_warm[t].size()) != nx + 8) {
+      if (static_cast<std::size_t>(xs_warm[t].size()) != nx + 11) {
         throw_pretty("Invalid argument: "
                      << "xs_init[" + std::to_string(t) + "] has wrong dimension (" << xs_warm[t].size()
                      << " prov ided - it should be equal to " + std::to_string(nx) + "). ActionModel: " << *models[t]);
       }
     }
     const std::size_t nx = problem_->get_terminalModel()->get_state()->get_nx();
-    if (static_cast<std::size_t>(xs_warm[T].size()) != nx + 8) {
+    if (static_cast<std::size_t>(xs_warm[T].size()) != nx + 11) {
       throw_pretty("Invalid argument: "
                    << "xs_init[" + std::to_string(T) + "] (terminal state) has wrong dimension (" << xs_warm[T].size()
                    << " provided - it should be equal to " + std::to_string(nx) + "). ActionModel: "
@@ -147,7 +147,7 @@ void SolverAbstract::setCandidate(const std::vector<Eigen::VectorXd>& xs_warm,
     for (std::size_t t = 0; t < T; ++t) {
       const boost::shared_ptr<ActionModelAbstract>& model = models[t];
       const std::size_t nu = model->get_nu();
-      if (static_cast<std::size_t>(us_warm[t].size()) != nu + 4) {
+      if (static_cast<std::size_t>(us_warm[t].size()) != nu + 6) {
         throw_pretty("Invalid argument: "
                      << "us_init[" + std::to_string(t) + "] has wrong dimension (" << us_warm[t].size()
                      << " provided - it should be equal to " + std::to_string(nu) + "). ActionModel: " << *model);

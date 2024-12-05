@@ -21,9 +21,9 @@ DifferentialActionModelAbstractTpl<Scalar>::DifferentialActionModelAbstractTpl(b
     : nu_(nu),
       nr_(nr),
       state_(state),
-      unone_(VectorXs::Zero(nu + 4)),
-      u_lb_(VectorXs::Constant(nu + 4, -std::numeric_limits<Scalar>::infinity())),
-      u_ub_(VectorXs::Constant(nu + 4, std::numeric_limits<Scalar>::infinity())),
+      unone_(VectorXs::Zero(nu + 6)),
+      u_lb_(VectorXs::Constant(nu + 6, -std::numeric_limits<Scalar>::infinity())),
+      u_ub_(VectorXs::Constant(nu + 6, std::numeric_limits<Scalar>::infinity())),
       has_control_limits_(false) {}
 
 template <typename Scalar>
@@ -131,7 +131,7 @@ bool DifferentialActionModelAbstractTpl<Scalar>::get_has_control_limits() const 
 
 template <typename Scalar>
 void DifferentialActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) {
-  if (static_cast<std::size_t>(u_lb.size()) != nu_ + 4) {
+  if (static_cast<std::size_t>(u_lb.size()) != nu_ + 6) {
     throw_pretty("Invalid argument: "
                  << "lower bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }
@@ -141,7 +141,7 @@ void DifferentialActionModelAbstractTpl<Scalar>::set_u_lb(const VectorXs& u_lb) 
 
 template <typename Scalar>
 void DifferentialActionModelAbstractTpl<Scalar>::set_u_ub(const VectorXs& u_ub) {
-  if (static_cast<std::size_t>(u_ub.size()) != nu_ + 4) {
+  if (static_cast<std::size_t>(u_ub.size()) != nu_ + 6) {
     throw_pretty("Invalid argument: "
                  << "upper bound has wrong dimension (it should be " + std::to_string(nu_) + ")");
   }

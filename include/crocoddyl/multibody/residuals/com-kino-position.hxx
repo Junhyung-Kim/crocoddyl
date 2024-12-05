@@ -16,11 +16,11 @@ namespace crocoddyl
 
   template <typename Scalar>
   ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref, const std::size_t nu)
-      : Base(state, 3, nu, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
+      : Base(state, 4, nu, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
 
   template <typename Scalar>
   ResidualModelCoMKinoPositionTpl<Scalar>::ResidualModelCoMKinoPositionTpl(boost::shared_ptr<StateKinodynamic> state, const Vector3s& cref)
-      : Base(state, 3, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
+      : Base(state, 4, true, false, true, false, false), cref_(cref), pin_model_(state->get_pinocchio()) {}
 
   template <typename Scalar>
   ResidualModelCoMKinoPositionTpl<Scalar>::~ResidualModelCoMKinoPositionTpl() {}
@@ -31,11 +31,11 @@ namespace crocoddyl
   {
     // Compute the residual residual give the reference CoMPosition position
     Data *d = static_cast<Data *>(data.get());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
     data->r(2) = d->pinocchio->com[0](2) - cref_(2);
-    //cref_ = data->r;
+    data->r(3) = x_state(8)- cref_(2);
   }
 
   template <typename Scalar>
@@ -48,9 +48,10 @@ namespace crocoddyl
 
     // Compute the derivatives of the frame placement
     const std::size_t nv = state_->get_nv();
-    data->Rx.leftCols(nv) = d->pinocchio->Jcom.block(0, 0, 3, nv);
-    (data->Rx.rightCols(8)).leftCols(1)(0) = -1.0;
-    (data->Rx.rightCols(4)).leftCols(1)(1) = -1.0;
+    data->Rx.leftCols(nv).topRows(3) = d->pinocchio->Jcom.block(0, 0, 3, nv);
+    (data->Rx.rightCols(8+3)).leftCols(1)(0) = -1.0;
+    (data->Rx.rightCols(4+3)).leftCols(1)(1) = -1.0;
+    data->Rx.rightCols(3).leftCols(1)(3) = 1.0;
     //(data->Rx.rightCols(4)).leftCols(1) = -1 * (data->Rx.rightCols(4)).leftCols(1);
   }
 

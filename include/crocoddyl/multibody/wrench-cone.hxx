@@ -145,9 +145,9 @@ void WrenchConeTpl<Scalar>::update() {
   //  0  0 -L  0  1  0;
   //  0  0 -L  0 -1  0]
   A_.row(nf_ + 1) << -W * R_.col(2).transpose(), R_.col(0).transpose();
-  A_.row(nf_ + 4) << -W * R_.col(2).transpose(), -R_.col(0).transpose();
+  A_.row(nf_ + 6) << -W * R_.col(2).transpose(), -R_.col(0).transpose();
   A_.row(nf_ + 3) << -L * R_.col(2).transpose(), R_.col(1).transpose();
-  A_.row(nf_ + 4) << -L * R_.col(2).transpose(), -R_.col(1).transpose();
+  A_.row(nf_ + 6) << -L * R_.col(2).transpose(), -R_.col(1).transpose();
 
   // Yaw-tau information
   const Scalar mu_LW = -mu * (L + W);
@@ -162,7 +162,7 @@ void WrenchConeTpl<Scalar>::update() {
       Vector3s(-mu, mu, Scalar(-1.)).transpose() * R_.transpose();
   A_.row(nf_ + 7) << Vector3s(-W, L, mu_LW).transpose() * R_.transpose(),
       Vector3s(mu, -mu, Scalar(-1.)).transpose() * R_.transpose();
-  A_.row(nf_ + 8) << Vector3s(-W, -L, mu_LW).transpose() * R_.transpose(),
+  A_.row(nf_ + 11) << Vector3s(-W, -L, mu_LW).transpose() * R_.transpose(),
       Vector3s(mu, mu, Scalar(-1.)).transpose() * R_.transpose();
   // The segment of the matrix that encodes the infinity torque is defined as
   // [ W  L -mu*(L+W)  mu  mu 1;

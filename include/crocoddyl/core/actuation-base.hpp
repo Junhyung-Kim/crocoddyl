@@ -148,7 +148,7 @@ struct ActuationDataAbstractTpl {
       : tau(model->get_state()->get_nv()),
         dtau_dx(model->get_state()->get_nv(), model->get_state()->get_ndx()),
         dtau_du(model->get_state()->get_nv(), model->get_nu()),
-        u_x(4) {
+        u_x(6) {
     tau.setZero();
     dtau_dx.setZero();
     dtau_du.setZero();

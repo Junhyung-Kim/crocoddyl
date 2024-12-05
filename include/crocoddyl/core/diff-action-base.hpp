@@ -240,15 +240,15 @@ struct DifferentialActionDataAbstractTpl {
   explicit DifferentialActionDataAbstractTpl(Model<Scalar>* const model)
       : cost(0.),
         xout(model->get_state()->get_nv()),
-        xout2(8),
-        Fx(model->get_state()->get_nv()+ 8, model->get_state()->get_ndx()),
-        Fu(model->get_state()->get_nv()+ 8, model->get_nu()+ 4),
+        xout2(8+3),
+        Fx(model->get_state()->get_nv() + 11, model->get_state()->get_ndx()),
+        Fu(model->get_state()->get_nv() + 11, model->get_nu() + 6),
         r(model->get_nr()),
         Lx(model->get_state()->get_ndx()),
-        Lu(model->get_nu()+ 4),
+        Lu(model->get_nu() + 6),
         Lxx(model->get_state()->get_ndx(), model->get_state()->get_ndx()),
-        Lxu(model->get_state()->get_ndx(), model->get_nu()+ 4),
-        Luu(model->get_nu()+ 4, model->get_nu()+ 4) {
+        Lxu(model->get_state()->get_ndx(), model->get_nu() + 6),
+        Luu(model->get_nu() + 6, model->get_nu() + 6) {
     xout.setZero();
     xout2.setZero();
     r.setZero();

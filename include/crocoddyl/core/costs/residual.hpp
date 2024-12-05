@@ -146,7 +146,7 @@ struct CostDataResidualTpl : public CostDataAbstractTpl<_Scalar> {
   CostDataResidualTpl(Model<Scalar>* const model, DataCollectorAbstract* const data)
       : Base(model, data),
         Arr_Rx(model->get_residual()->get_nr(), model->get_state()->get_ndx()),
-        Arr_Ru(model->get_residual()->get_nr(), model->get_nu() + 4) {
+        Arr_Ru(model->get_residual()->get_nr(), model->get_nu() + 6) {
     Arr_Rx.setZero();
     Arr_Ru.setZero();
   }

@@ -42,7 +42,7 @@ namespace crocoddyl
     Data *d = static_cast<Data *>(data.get());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> q = x.head(state_->get_nq());
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> v = x.segment(state_->get_nq(), state_->get_nv());
-    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8);
+    const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     
     pinocchio::computeCentroidalMomentum(*pin_model_.get(), *d->pinocchio, q, v);  
     data->r(0) = d->pinocchio->hg.toVector()(3) - x_state(7);
@@ -66,8 +66,8 @@ namespace crocoddyl
     //pinocchio::computeCentroidalMap(*pin_model_.get(), *d->pinocchio, q);
     //pinocchio::computeCentroidalMapTimeVariation(*pin_model_.get(), *d->pinocchio, q, v);
     //data->Rx.rightCols(1)(0) = -1;
-    data->Rx.bottomRightCorner(2, 5).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
-    data->Rx.bottomRightCorner(2, 1).topLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
+    data->Rx.bottomRightCorner(2, 5+3).bottomLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
+    data->Rx.bottomRightCorner(2, 1+3).topLeftCorner(1, 1).diagonal().array() = (Scalar)-1;
     //data->Rx.rightCols(5).leftCols(1)(1) = -1;
     data->Rx.leftCols(nv) = d->dh_dq.block(3, 0, 2, nv);
     data->Rx.block(0, nv, 2, nv) = d->dhd_da.block(3, 0, 2, nv);

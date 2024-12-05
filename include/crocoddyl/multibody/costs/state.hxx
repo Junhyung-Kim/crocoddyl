@@ -160,8 +160,8 @@ void CostModelStateTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbstrac
           RxBlock.transpose() *
           data->activation->Arr.diagonal().segment(pin_model_->idx_vs[i], pin_model_->nvs[i]).asDiagonal() * RxBlock;
     }
-    data->Lx.tail(state_->get_nv() + 8) = data->activation->Ar.tail(state_->get_nv() + 8);
-    data->Lxx.diagonal().tail(state_->get_nv() + 8) = data->activation->Arr.diagonal().tail(state_->get_nv() + 8);
+    data->Lx.tail(state_->get_nv() + 11) = data->activation->Ar.tail(state_->get_nv() + 11);
+    data->Lxx.diagonal().tail(state_->get_nv() + 11) = data->activation->Arr.diagonal().tail(state_->get_nv() + 11);
   } else {
     data->Lx = data->activation->Ar;
     data->Lxx.diagonal() = data->activation->Arr.diagonal();
