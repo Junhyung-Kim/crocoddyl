@@ -15,7 +15,7 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref, const std::size_t nu)
-      : Base(state, 2, nu, false, false, false, false, false, false, true), xref_(xref)
+      : Base(state, 3, nu, false, false, false, false, false, false, true), xref_(xref)
   {
     if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 11)
     {
@@ -27,7 +27,7 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref)
-      : Base(state, 2, false, false, false, false, false, false, true), xref_(xref)
+      : Base(state, 3, false, false, false, false, false, false, true), xref_(xref)
   {
     if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 11)
     {
@@ -61,6 +61,10 @@ namespace crocoddyl
     //data->r.setZero();
     data->r.head(2) = x.head(21).tail(2);
     data->r.tail(1) = x.tail(1);
+   
+    
+    //td::cout << "x_ref " << std::endl;
+    //std::cout << xref_ << std::endl; // size 52
 
     //data->r.tail(1) = x.head(state_->get_nq()).tail(1);
     //xref_ = data->r;
@@ -81,7 +85,8 @@ namespace crocoddyl
     //data->Rx.bottomLeftCorner(2, state_->get_nq()-1).topRightCorner(1, 1).diagonal().array() = (Scalar)1;
     data->Rx.bottomLeftCorner(2, 20).bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
     data->Rx.bottomRightCorner(1, 1).diagonal().array() = (Scalar)1;
-  
+
+   
   }
 
   template <typename Scalar>

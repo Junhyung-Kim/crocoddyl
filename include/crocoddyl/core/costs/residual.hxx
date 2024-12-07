@@ -231,6 +231,8 @@ Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual
     data->Lx.tail(1).noalias() = Rstate1.transpose() * data->activation->Ar;
     d->Arr_Rx.rightCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
     data->Lxx.bottomRightCorner(1, 1).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(1);
+
+  
   }
   else if (is_state2)
   {
