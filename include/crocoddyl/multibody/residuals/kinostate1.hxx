@@ -15,7 +15,7 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref, const std::size_t nu)
-      : Base(state, 2, nu, false, false, false, false, false, false, true), xref_(xref)
+      : Base(state, /*2,*/ 4, nu, false, false, false, false, false, false, true), xref_(xref)
   {
     if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 8)
     {
@@ -27,7 +27,7 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const VectorXs &xref)
-      : Base(state, 2, false, false, false, false, false, false, true), xref_(xref)
+      : Base(state, /*2,*/ 4, false, false, false, false, false, false, true), xref_(xref)
   {
     if (static_cast<std::size_t>(xref_.size()) != state_->get_nx() + 8)
     {
@@ -39,11 +39,11 @@ namespace crocoddyl
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state,
                                                    const std::size_t nu)
-      : Base(state, 2, nu, false, false, false, false, false, false, true), xref_(state->zero()) {}
+      : Base(state, /*2,*/ 4, nu, false, false, false, false, false, false, true), xref_(state->zero()) {}
 
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::ResidualFlyState1Tpl(boost::shared_ptr<typename Base::StateAbstract> state)
-      : Base(state, 2, false, false, false, false, false, true), xref_(state->zero()) {}
+      : Base(state, /*2,*/ 4, false, false, false, false, false, true), xref_(state->zero()) {}
 
   template <typename Scalar>
   ResidualFlyState1Tpl<Scalar>::~ResidualFlyState1Tpl() {}
@@ -59,9 +59,12 @@ namespace crocoddyl
     }
     // state_->diff1(xref_, x, data->r); //diff1
     //data->r.setZero();
-    data->r = x.head(21).tail(2);
-    //data->r.tail(1) = x.head(state_->get_nq()).tail(1);
-    //xref_ = data->r;
+    //data->r = x.head(21).tail(2);
+
+    
+    data->r.head(2) = x.head(23).tail(4).head(2);
+    data->r.tail(2).head(1) = x.head(23).tail(2).head(1) - xref_.head(1);//xref_(0);
+    data->r.tail(1) = x.head(23).tail(1) + xref_.head(1);//xref_(0);
   }
 
   template <typename Scalar>
@@ -77,7 +80,8 @@ namespace crocoddyl
 
     //data->Rx.setZero();
     //data->Rx.bottomLeftCorner(2, state_->get_nq()-1).topRightCorner(1, 1).diagonal().array() = (Scalar)1;
-    data->Rx.bottomLeftCorner(2, 20).bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
+    //data->Rx.bottomLeftCorner(2, 20).bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
+    data->Rx.bottomLeftCorner(4, 22).bottomRightCorner(4, 4).diagonal().array() = (Scalar)1;
   }
 
   template <typename Scalar>
