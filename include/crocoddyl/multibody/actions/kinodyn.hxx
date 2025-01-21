@@ -98,7 +98,17 @@ namespace crocoddyl
     pinocchio::updateFramePlacements(pinocchio_, d->pinocchio);
     //pinocchio::computeCentroidalMomentum(pinocchio_, d->pinocchio, q, v);
     
-    d->xout2 << x_state[1], (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))), u[state_->get_nv()+0], u[state_->get_nv()+1], x_state[5], (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[4]-x_state[6]+u[state_->get_nv()+2]/(100*(9.81+u[state_->get_nv()+4]))), u[state_->get_nv()+2], u[state_->get_nv()+2], x_state[9], u[state_->get_nv()+4], u[state_->get_nv()+5];
+    d->xout2 << x_state[1],
+     (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))),
+      u[state_->get_nv()+0], 
+      u[state_->get_nv()+1], 
+      x_state[5], 
+      (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[4]-x_state[6]+u[state_->get_nv()+3]/(100*(9.81+u[state_->get_nv()+4]))), 
+      u[state_->get_nv()+2], 
+      u[state_->get_nv()+3], 
+      x_state[9], 
+      u[state_->get_nv()+4],
+      u[state_->get_nv()+5];
     //d->xout2 << x_state[1], 12.3526*(x_state[0] - x_state[2]) - d->multibody.actuation->u_x[1]/ 95.941282,  d->multibody.actuation->u_x[0], d->multibody.actuation->u_x[1], x_state[5], 12.3526*(x_state[4] - x_state[6]) + d->multibody.actuation->u_x[3]/ 95.941282, d->multibody.actuation->u_x[2], d->multibody.actuation->u_x[3], 0, 0, 0;
     costs_->calc(d->costs, x, u);
     d->cost = d->costs->cost;
@@ -155,20 +165,36 @@ namespace crocoddyl
     pinocchio::computeRNEADerivatives(pinocchio_, d->pinocchio, q, v, d->xout);
 
     d->Fu.topLeftCorner(nu_,nu_).setIdentity();
+
+    /*d->xout2 << x_state[1],
+     (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))),
+      u[state_->get_nv()+0], 
+      u[state_->get_nv()+1], 
+      x_state[5], 
+      (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[4]-x_state[6]+u[state_->get_nv()+3]/(100*(9.81+u[state_->get_nv()+4]))), 
+      u[state_->get_nv()+2], 
+      u[state_->get_nv()+2], 
+      x_state[9], 
+      u[state_->get_nv()+4],
+      u[state_->get_nv()+5];*/
     
     double nqnv = state_->get_nv() + state_->get_nv();
     d->Fx(state_->get_nv()+0,nqnv+1) = 1.0;
+    
     d->Fx(state_->get_nv()+1,nqnv+0) = (1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8] - x_state[10]);
     d->Fx(state_->get_nv()+1,nqnv+2) = -(1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8]- x_state[10]);
     d->Fx(state_->get_nv()+1,nqnv+8) = (1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[2] - x_state[0] + u[state_->get_nv()+1]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
     d->Fx(state_->get_nv()+1,nqnv+10) = -(1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[2] - x_state[0] + u[state_->get_nv()+1]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
+    
     d->Fu(state_->get_nv()+1,state_->get_nv()+1) = -1.0/(100*(x_state[8] - x_state[10]));
     d->Fu(state_->get_nv()+1,state_->get_nv()+4) = (1.0*(x_state[0] - x_state[2]))/(x_state[8]- x_state[10]);
 
     d->Fu(state_->get_nv()+2,state_->get_nv()+0) = 1.0;
+    
     d->Fu(state_->get_nv()+3,state_->get_nv()+1) = 1.0;
     
     d->Fx(state_->get_nv()+4,nqnv+5) = 1.0;
+    
     d->Fx(state_->get_nv()+5,nqnv+4) = (1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8] - x_state[10]);
     d->Fx(state_->get_nv()+5,nqnv+6) = -(1.0*(u[state_->get_nv()+4] + 981/100))/(x_state[8]- x_state[10]);
     d->Fx(state_->get_nv()+5,nqnv+8) = -(1.0*(u[state_->get_nv()+4] + 981/100)*(x_state[4] - x_state[6] + u[state_->get_nv()+3]/(100*u[state_->get_nv()+4] + 981)))/((x_state[8] - x_state[10])*(x_state[8] - x_state[10]));
@@ -177,11 +203,25 @@ namespace crocoddyl
     d->Fu(state_->get_nv()+5,state_->get_nv()+4) = (1.0*(x_state[4] - x_state[6]))/(x_state[8]- x_state[10]);
 
     d->Fu(state_->get_nv()+6,state_->get_nv()+2) = 1.0;
+
     d->Fu(state_->get_nv()+7,state_->get_nv()+3) = 1.0;
 
     d->Fx(state_->get_nv()+8,nqnv+9) = 1.0;
+    /*d->xout2 << x_state[1],
+     (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))),
+      u[state_->get_nv()+0], 
+      u[state_->get_nv()+1], 
+      x_state[5], 
+      (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[4]-x_state[6]+u[state_->get_nv()+3]/(100*(9.81+u[state_->get_nv()+4]))), 
+      u[state_->get_nv()+2], 
+      u[state_->get_nv()+2], 
+      x_state[9], 
+      u[state_->get_nv()+4],
+      u[state_->get_nv()+5];*/
+    
     d->Fu(state_->get_nv()+9,state_->get_nv()+4) = 1.0;
     d->Fu(state_->get_nv()+10,state_->get_nv()+5) = 1.0;
+
     
     costs_->calcDiff(d->costs, x, u);
   }
