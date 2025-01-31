@@ -35,7 +35,7 @@ namespace crocoddyl
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
     data->r(2) = d->pinocchio->com[0](2) - cref_(2);
-    data->r(3) = x_state(8)- cref_(2);
+    data->r(3) = x_state(8) - cref_(2);
   }
 
   template <typename Scalar>

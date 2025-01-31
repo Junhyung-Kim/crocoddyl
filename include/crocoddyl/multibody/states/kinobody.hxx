@@ -19,7 +19,6 @@ namespace crocoddyl
   StateKinodynamicTpl<Scalar>::StateKinodynamicTpl(boost::shared_ptr<PinocchioModel> model)
       : Base(model->nq + model->nv, 2 * model->nv), pinocchio_(model), x0_(VectorXs::Zero(model->nq + model->nv + 11))
   {
-
     const std::size_t nq0 = model->joints[1].nq();
     x0_.head(nq_) = pinocchio::neutral(*pinocchio_.get());
 
