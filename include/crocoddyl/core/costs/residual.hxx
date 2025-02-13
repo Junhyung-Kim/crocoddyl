@@ -141,10 +141,10 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
     d->Arr_Rx.leftCols(nv).rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(2);
     data->Lxx.topLeftCorner(nv, nv).bottomRightCorner(2, 2).noalias() = Rstate.rightCols(2).transpose() * d->Arr_Rx.leftCols(nv).rightCols(2);
   
-    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(1);//.leftCols(1);
-    data->Lx.tail(1).noalias() = Rstate1.transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
-    data->Lxx.bottomRightCorner(1, 1).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(1);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(2);//.leftCols(1);
+    data->Lx.tail(2).noalias() = Rstate1.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
+    data->Lxx.bottomRightCorner(2, 2).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(2);
   
   }
   else if (is_state2)
@@ -224,13 +224,13 @@ Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual
     else if (is_state1)
   {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate = data->residual->Rx.leftCols(nv);//.leftCols(1);
-    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(1);//.leftCols(1);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(2);//.leftCols(1);
     data->Lx.head(nv).tail(2).noalias() = Rstate.rightCols(2).transpose() * data->activation->Ar;
     d->Arr_Rx.leftCols(nv).rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(2);
     data->Lxx.topLeftCorner(nv, nv).bottomRightCorner(2, 2).noalias() = Rstate.rightCols(2).transpose() * d->Arr_Rx.leftCols(nv).rightCols(2);
-    data->Lx.tail(1).noalias() = Rstate1.transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(1).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
-    data->Lxx.bottomRightCorner(1, 1).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(1);
+    data->Lx.tail(2).noalias() = Rstate1.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
+    data->Lxx.bottomRightCorner(2, 2).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(2);
 
   
   }

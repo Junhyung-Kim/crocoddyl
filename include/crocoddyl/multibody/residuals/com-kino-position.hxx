@@ -34,7 +34,7 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
-    data->r(2) = d->pinocchio->com[0](2) - cref_(2);
+    data->r(2) = d->pinocchio->com[0](2) - x_state(8);//cref_(2);//x_state(8);
     data->r(3) = x_state(8) - cref_(2);
   }
 
@@ -51,8 +51,8 @@ namespace crocoddyl
     data->Rx.leftCols(nv).topRows(3) = d->pinocchio->Jcom.block(0, 0, 3, nv);
     (data->Rx.rightCols(8+3)).leftCols(1)(0) = -1.0;
     (data->Rx.rightCols(4+3)).leftCols(1)(1) = -1.0;
+    (data->Rx.rightCols(3)).leftCols(1)(2) = -1.0;
     data->Rx.rightCols(3).leftCols(1)(3) = 1.0;
-    //(data->Rx.rightCols(4)).leftCols(1) = -1 * (data->Rx.rightCols(4)).leftCols(1);
   }
 
   template <typename Scalar>
