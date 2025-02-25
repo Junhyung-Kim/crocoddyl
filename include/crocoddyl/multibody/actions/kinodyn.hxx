@@ -52,14 +52,14 @@ namespace crocoddyl
       temp(i) = 2.0;
     }
 
-    temp(nu_) = 30.0;
+    temp(nu_) = 30000.0;
     temp(nu_ + 1) = 30000.0;
 
-    temp(nu_ + 2) = 30.0;
+    temp(nu_ + 2) = 30000.0;
     temp(nu_ + 3) = 30000.0;
 
-    temp(nu_  + 6) = 30.0;
-    temp(nu_ + 5) = 30.0;
+    temp(nu_  + 6) = 30000.0;
+    temp(nu_ + 5) = 30000.0;
     Base::set_u_lb(Scalar(-1.) * temp);
     Base::set_u_ub(Scalar(+1.) * temp);
   }
@@ -91,7 +91,7 @@ namespace crocoddyl
     
     actuation_->calc(d->multibody.actuation, x, u);
 
-    d->xout = d->multibody.actuation->tau.head(state_->get_nv());
+    d->xout = a;//d->multibody.actuation->tau.head(state_->get_nv());
 
     pinocchio::forwardKinematics(pinocchio_, d->pinocchio, q);
     pinocchio::centerOfMass(pinocchio_, d->pinocchio, q, false);

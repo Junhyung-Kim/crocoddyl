@@ -101,12 +101,20 @@ void IntegratedActionModelEulerTpl<Scalar>::calcDiff(const boost::shared_ptr<Act
   control_->multiplyByJacobian(d->control, da_du, d->da_du);
   d->Fx.topRows(nv).noalias() = da_dx.topRows(nv) * time_step2_;
   d->Fx.bottomRows(nv + 11).noalias() = da_dx * time_step_;
+  /*
+  d->dx.tail(4+3).head(1).noalias() += a1.tail(3+3).head(1) * time_step2_;
+  d->dx.tail(8+3).head(1).noalias() += a1.tail(7+3).head(1) * time_step2_;
+  d->dx.tail(3).head(1).noalias() += a1.tail(2).head(1) * time_step2_;
+  */
+
   d->Fx.bottomRows(8+3).topRows(1).noalias() += da_dx.bottomRows(7+3).topRows(1) * time_step2_;
   d->Fx.bottomRows(4+3).topRows(1).noalias() += da_dx.bottomRows(3+3).topRows(1) * time_step2_;
   d->Fx.bottomRows(3).topRows(1).noalias() += da_dx.bottomRows(2).topRows(1) * time_step2_;
+
   d->Fx.topRightCorner(nv + 11, nv + 11).topLeftCorner(nv, nv).diagonal().array() += Scalar(time_step_);
   d->Fu.topRows(nv).noalias() = time_step2_ * d->da_du.topRows(nv);
   d->Fu.bottomRows(nv + 11).noalias() = time_step_ * d->da_du;
+
   state_->JintegrateTransport(x, d->dx, d->Fx, second);
   state_->Jintegrate(x, d->dx, d->Fx, d->Fx, first, addto);
   state_->JintegrateTransport(x, d->dx, d->Fu, second);

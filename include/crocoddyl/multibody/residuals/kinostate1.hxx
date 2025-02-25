@@ -83,7 +83,7 @@ namespace crocoddyl
 
     //data->Rx.setZero();
     //data->Rx.bottomLeftCorner(2, state_->get_nq()-1).topRightCorner(1, 1).diagonal().array() = (Scalar)1;
-    data->Rx.bottomLeftCorner(2, 20).bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
+    data->Rx.topLeftCorner(2, 20).bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
     data->Rx.bottomRightCorner(2, 2).diagonal().array() = (Scalar)1;
 
    
