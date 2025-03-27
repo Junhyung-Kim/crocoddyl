@@ -60,7 +60,7 @@ namespace crocoddyl
     // state_->diff1(xref_, x, data->r); //diff1
     //data->r.setZero();
     data->r.head(2) = x.head(21).tail(2);
-    data->r.tail(2).head(1) = x.tail(2).head(1);
+    data->r.tail(2).head(1) = x.tail(2).head(1) - xref_.head(2).tail(1);
     data->r.tail(1) = x.tail(1) - xref_.head(1);
    
     

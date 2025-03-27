@@ -207,6 +207,7 @@ namespace crocoddyl
     d->Fu(state_->get_nv()+7,state_->get_nv()+3) = 1.0;
 
     d->Fx(state_->get_nv()+8,nqnv+9) = 1.0;
+
     /*d->xout2 << x_state[1],
      (9.81+u[state_->get_nv()+4])/(x_state[8]-x_state[10])*(x_state[0]-x_state[2]-u[state_->get_nv()+1]/(100*(9.81+u[state_->get_nv()+4]))),
       u[state_->get_nv()+0], 
@@ -221,6 +222,8 @@ namespace crocoddyl
     
     d->Fu(state_->get_nv()+9,state_->get_nv()+4) = 1.0;
     d->Fu(state_->get_nv()+10,state_->get_nv()+5) = 1.0;
+
+
 
     
     costs_->calcDiff(d->costs, x, u);

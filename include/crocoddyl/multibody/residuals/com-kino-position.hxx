@@ -34,8 +34,9 @@ namespace crocoddyl
     const Eigen::VectorBlock<const Eigen::Ref<const VectorXs>, Eigen::Dynamic> x_state = x.tail(8+3);
     data->r(0) = d->pinocchio->com[0](0) - x_state(0);
     data->r(1) = d->pinocchio->com[0](1) - x_state(4);
-    data->r(2) = d->pinocchio->com[0](2) - x_state(8);//cref_(2);//x_state(8);
+    data->r(2) = d->pinocchio->com[0](2) - x_state(8);
     data->r(3) = x_state(8) - cref_(2);
+   
   }
 
   template <typename Scalar>
