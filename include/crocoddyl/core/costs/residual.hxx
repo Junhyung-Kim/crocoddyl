@@ -137,14 +137,14 @@ void CostModelResidualTpl<Scalar>::calcDiff(const boost::shared_ptr<CostDataAbst
   else if (is_state1)
   {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate = data->residual->Rx.leftCols(nv);//.leftCols(1);
-    data->Lx.head(nv).tail(2).noalias() = Rstate.rightCols(2).transpose() * data->activation->Ar;
-    d->Arr_Rx.leftCols(nv).rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(2);
-    data->Lxx.topLeftCorner(nv, nv).bottomRightCorner(2, 2).noalias() = Rstate.rightCols(2).transpose() * d->Arr_Rx.leftCols(nv).rightCols(2);
+    data->Lx.head(nv).tail(4).noalias() = Rstate.rightCols(4).transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(nv).rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(4);
+    data->Lxx.topLeftCorner(nv, nv).bottomRightCorner(4, 4).noalias() = Rstate.rightCols(4).transpose() * d->Arr_Rx.leftCols(nv).rightCols(4);
   
-    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(2);//.leftCols(1);
-    data->Lx.tail(2).noalias() = Rstate1.transpose() * data->activation->Ar;
-    d->Arr_Rx.rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
-    data->Lxx.bottomRightCorner(2, 2).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(2);
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(4);//.leftCols(1);
+    data->Lx.tail(4).noalias() = Rstate1.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(4);
   
   }
   else if (is_state2)
@@ -224,6 +224,16 @@ Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual
     else if (is_state1)
   {
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate = data->residual->Rx.leftCols(nv);//.leftCols(1);
+    data->Lx.head(nv).tail(4).noalias() = Rstate.rightCols(4).transpose() * data->activation->Ar;
+    d->Arr_Rx.leftCols(nv).rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(4);
+    data->Lxx.topLeftCorner(nv, nv).bottomRightCorner(4, 4).noalias() = Rstate.rightCols(4).transpose() * d->Arr_Rx.leftCols(nv).rightCols(4);
+  
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(4);//.leftCols(1);
+    data->Lx.tail(4).noalias() = Rstate1.transpose() * data->activation->Ar;
+    d->Arr_Rx.rightCols(4).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
+    data->Lxx.bottomRightCorner(4, 4).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(4);
+    /*
+    Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate = data->residual->Rx.leftCols(nv);//.leftCols(1);
     Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rstate1 = data->residual->Rx.rightCols(2);//.leftCols(1);
     data->Lx.head(nv).tail(2).noalias() = Rstate.rightCols(2).transpose() * data->activation->Ar;
     d->Arr_Rx.leftCols(nv).rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate.rightCols(2);
@@ -231,8 +241,7 @@ Eigen::Block<MatrixXs, Eigen::Dynamic, Eigen::Dynamic, true> Rq = data->residual
     data->Lx.tail(2).noalias() = Rstate1.transpose() * data->activation->Ar;
     d->Arr_Rx.rightCols(2).noalias() = data->activation->Arr.diagonal().asDiagonal() * Rstate1;
     data->Lxx.bottomRightCorner(2, 2).noalias() = Rstate1.transpose() * d->Arr_Rx.rightCols(2);
-
-  
+    */
   }
   else if (is_state2)
   {
