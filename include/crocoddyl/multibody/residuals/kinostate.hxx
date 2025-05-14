@@ -59,11 +59,13 @@ namespace crocoddyl
     }
     // state_->diff1(xref_, x, data->r); //diff1
     data->r.setZero();
-    data->r.head(1) = x.tail(6+3).head(1) - xref_.tail(6+3).head(1);
-    data->r.head(2).tail(1) = x.tail(5+3).head(1) - xref_.tail(5+3).head(1);
+    data->r.head(1) = x.tail(6+3).head(1) - xref_.tail(6+3).head(1); // zmp
+    data->r.head(2).tail(1) = x.tail(5+3).head(1) - xref_.tail(5+3).head(1);//ang
 
-    data->r.tail(2).head(1) = x.tail(1+3).head(1) - xref_.tail(1+3).head(1);
-    data->r.tail(1) = x.tail(2+3).head(1) - xref_.tail(2+3).head(1);
+    data->r.tail(2).head(1) = x.tail(1+3).head(1) - xref_.tail(1+3).head(1);//ang
+    data->r.tail(1) = x.tail(2+3).head(1) - xref_.tail(2+3).head(1); // zmp
+
+    //std::cout << "zmp " << xref_.tail(6+3).head(1) << " " << xref_.tail(2+3).head(1) << std::endl;
   }
 
   template <typename Scalar>
